@@ -1,12 +1,12 @@
 default: build
 
 build:
-	go build -i -o docker-machine-parallels ./bin
+	go build -i -o docker-machine-driver-parallels ./bin
 
 clean:
-	$(RM) docker-machine-parallels
+	$(RM) docker-machine-driver-parallels
 
 install: build
-	cp ./docker-machine-parallels /usr/local/bin/docker-machine-parallels
+	cp -r ./docker-machine-driver-parallels /usr/local/bin/
 
 .PHONY: install
