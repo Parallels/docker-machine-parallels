@@ -1,4 +1,4 @@
-package docker_machine_parallels
+package parallels
 
 import (
 	"bytes"
