@@ -140,8 +140,13 @@ func (d *Driver) Create() error {
 		return err
 	}
 
-	// Enable Shared Folders
-	if err := prlctl("set", d.MachineName, "--shf-host", "on"); err != nil {
+	// Configure Shared Folders
+	if err := prlctl("set", d.MachineName,
+		"--shf-host", "on",
+		"--shf-host-defined", "off",
+		"--shared-cloud", "off",
+		"--shared-profile", "off",
+		"--smart-mount", "off"); err != nil {
 		return err
 	}
 
