@@ -340,38 +340,34 @@ func (d *Driver) Restart() error {
 	return d.Start()
 }
 
-// GetCreateFlags returns the mcnflag.Flag slice representing the flags
-// that can be set, their descriptions and defaults.
+// GetCreateFlags registers the flags this driver adds to
+// "docker hosts create"
 func (d *Driver) GetCreateFlags() []mcnflag.Flag {
 	return []mcnflag.Flag{
-		{
+		mcnflag.IntFlag{
 			EnvVar: "PARALLELS_MEMORY_SIZE",
 			Name:   "parallels-memory",
 			Usage:  "Size of memory for host in MB",
 			Value:  defaultMemory,
 		},
-		{
+		mcnflag.IntFlag{
 			EnvVar: "PARALLELS_CPU_COUNT",
 			Name:   "parallels-cpu-count",
 			Usage:  "number of CPUs for the machine (-1 to use the number of CPUs available)",
 			Value:  defaultCPU,
 		},
-		{
+		mcnflag.IntFlag{
 			EnvVar: "PARALLELS_DISK_SIZE",
 			Name:   "parallels-disk-size",
 			Usage:  "Size of disk for host in MB",
 			Value:  defaultDiskSize,
 		},
-		{
+		mcnflag.StringFlag{
 			EnvVar: "PARALLELS_BOOT2DOCKER_URL",
 			Name:   "parallels-boot2docker-url",
 			Usage:  "The URL of the boot2docker image. Defaults to the latest available version",
 			Value:  defaultBoot2DockerURL,
 		},
-		// {
-		// 	Name:  "parallels-no-share",
-		// 	Usage: "Disable the mount of your home directory",
-		// },
 	}
 }
 
