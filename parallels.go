@@ -493,18 +493,26 @@ func (d *Driver) diskPath() string {
 }
 
 func (d *Driver) mountShareFolder(shareName string, mountPoint string) error {
-	cmd := "sudo mkdir -p " + mountPoint + " && sudo mount -t prl_fs " + shareName + " " + mountPoint
-
+	// Check the host path is available
 	if _, err := os.Stat(mountPoint); err != nil {
 		if os.IsNotExist(err) {
 			log.Infof("Host path '%s' does not exist. Skipping mount to VM...", mountPoint)
-		} else {
-			return err
+			return nil
 		}
-	} else {
-		if _, err := drivers.RunSSHCommandFromDriver(d, cmd); err != nil {
-			return fmt.Errorf("Error mounting shared folder: %s", err)
-		}
+		return err
+	}
+
+	// Ensure that share is available on the guest side
+	checkCmd := "sudo modprobe prl_fs && grep -w " + shareName + " /proc/fs/prl_fs/sf_list"
+	if _, err := drivers.RunSSHCommandFromDriver(d, checkCmd); err != nil {
+		log.Infof("Shared folder '%s' is unavailable. Skipping mount to VM...", shareName)
+		return nil
+	}
+
+	// Mount shared folder
+	mountCmd := "sudo mkdir -p " + mountPoint + " && sudo mount -t prl_fs " + shareName + " " + mountPoint
+	if _, err := drivers.RunSSHCommandFromDriver(d, mountCmd); err != nil {
+		return fmt.Errorf("Error mounting shared folder: %s", err)
 	}
 
 	return nil
