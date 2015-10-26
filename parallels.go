@@ -145,10 +145,12 @@ func (d *Driver) Create() error {
 		return err
 	}
 
-	if err := prlctl("set", d.MachineName,
-		"--shf-host-add", shareFolderName,
-		"--path", shareFolderPath); err != nil {
-		return err
+	if !d.NoShare {
+		if err := prlctl("set", d.MachineName,
+			"--shf-host-add", shareFolderName,
+			"--path", shareFolderPath); err != nil {
+			return err
+		}
 	}
 
 	log.Infof("Starting Parallels Desktop VM...")
@@ -370,6 +372,10 @@ func (d *Driver) GetCreateFlags() []mcnflag.Flag {
 			Usage:  "The URL of the boot2docker image. Defaults to the latest available version",
 			Value:  defaultBoot2DockerURL,
 		},
+		mcnflag.BoolFlag{
+			Name:  "parallels-no-share",
+			Usage: "Disable the mount of your home directory",
+		},
 	}
 }
 
@@ -385,6 +391,7 @@ func (d *Driver) SetConfigFromFlags(opts drivers.DriverOptions) error {
 	d.SwarmDiscovery = opts.String("swarm-discovery")
 	d.SSHUser = "docker"
 	d.SSHPort = 22
+	d.NoShare = opts.Bool("parallels-no-share")
 
 	return nil
 }
@@ -418,8 +425,10 @@ func (d *Driver) Start() error {
 	}
 
 	// Mount Share Folder
-	if err := d.mountShareFolder(shareFolderName, shareFolderPath); err != nil {
-		return err
+	if !d.NoShare {
+		if err := d.mountShareFolder(shareFolderName, shareFolderPath); err != nil {
+			return err
+		}
 	}
 
 	return nil
