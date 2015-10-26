@@ -444,7 +444,7 @@ func (d *Driver) Stop() error {
 
 func (d *Driver) getIPfromDHCPLease() (string, error) {
 
-	dhcp_lease_file := "/Library/Preferences/Parallels/parallels_dhcp_leases"
+	DHCPLeaseFile := "/Library/Preferences/Parallels/parallels_dhcp_leases"
 
 	stdout, err := prlctlOut("list", "-i", d.MachineName)
 	macRe := regexp.MustCompile("net0.* mac=([0-9A-F]{12}) card=.*")
@@ -459,13 +459,13 @@ func (d *Driver) getIPfromDHCPLease() (string, error) {
 		return "", fmt.Errorf("Not a valid MAC address: %s. It should be exactly 12 digits.", mac)
 	}
 
-	leases, err := ioutil.ReadFile(dhcp_lease_file)
+	leases, err := ioutil.ReadFile(DHCPLeaseFile)
 	if err != nil {
 		return "", err
 	}
 
 	ipRe := regexp.MustCompile("(.*)=\"(.*),(.*)," + strings.ToLower(mac) + ",.*\"")
-	mostRecentIp := ""
+	mostRecentIP := ""
 	mostRecentLease := uint64(0)
 	for _, l := range ipRe.FindAllStringSubmatch(string(leases), -1) {
 		ip := l[1]
@@ -473,17 +473,17 @@ func (d *Driver) getIPfromDHCPLease() (string, error) {
 		leaseTime, _ := strconv.ParseUint(l[3], 10, 32)
 		log.Debugf("Found lease: %s for MAC: %s, expiring at %d, leased for %d s.\n", ip, mac, expiry, leaseTime)
 		if mostRecentLease <= expiry-leaseTime {
-			mostRecentIp = ip
+			mostRecentIP = ip
 			mostRecentLease = expiry - leaseTime
 		}
 	}
 
-	if len(mostRecentIp) == 0 {
-		return "", fmt.Errorf("IP lease not found for MAC address %s in: %s\n", mac, dhcp_lease_file)
+	if len(mostRecentIP) == 0 {
+		return "", fmt.Errorf("IP lease not found for MAC address %s in: %s\n", mac, DHCPLeaseFile)
 	}
-	log.Debugf("Found IP lease: %s for MAC address %s\n", mostRecentIp, mac)
+	log.Debugf("Found IP lease: %s for MAC address %s\n", mostRecentIP, mac)
 
-	return mostRecentIp, nil
+	return mostRecentIP, nil
 }
 
 func (d *Driver) diskPath() string {
@@ -626,12 +626,12 @@ func (d *Driver) getParallelsVersion() (int, error) {
 		return 0, fmt.Errorf("Parallels Desktop version could not be fetched: %s", stdout)
 	}
 
-	major_ver, err := strconv.Atoi(res[1])
+	majorVer, err := strconv.Atoi(res[1])
 	if err != nil {
 		return 0, err
 	}
 
-	return major_ver, nil
+	return majorVer, nil
 }
 
 // Detect Parallels Desktop edition
