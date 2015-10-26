@@ -494,10 +494,10 @@ func (d *Driver) mountShareFolder(shareName string, mountPoint string) error {
 	cmd := "sudo mkdir -p " + mountPoint + " && sudo mount -t prl_fs " + shareName + " " + mountPoint
 
 	if _, err := os.Stat(mountPoint); err != nil {
-		if !os.IsNotExist(err) {
-			return err
-		} else {
+		if os.IsNotExist(err) {
 			log.Infof("Host path '%s' does not exist. Skipping mount to VM...", mountPoint)
+		} else {
+			return err
 		}
 	} else {
 		if _, err := drivers.RunSSHCommandFromDriver(d, cmd); err != nil {
