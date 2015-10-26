@@ -33,6 +33,7 @@ const (
 	defaultDiskSize       = 20000
 )
 
+// Driver for Parallels Desktop
 type Driver struct {
 	*drivers.BaseDriver
 	CPU            int
@@ -42,6 +43,7 @@ type Driver struct {
 	NoShare        bool
 }
 
+// NewDriver creates a new Parallels Desktop driver with default settings
 func NewDriver(hostName, storePath string) *Driver {
 	return &Driver{
 		BaseDriver: &drivers.BaseDriver{
