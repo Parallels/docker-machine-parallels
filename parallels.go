@@ -140,15 +140,22 @@ func (d *Driver) Create() error {
 		return err
 	}
 
-	// Enable Shared Folders
-	if err := prlctl("set", d.MachineName, "--shf-host", "on"); err != nil {
+	// Configure Shared Folders
+	if err := prlctl("set", d.MachineName,
+		"--shf-host", "on",
+		"--shf-host-defined", "off",
+		"--shared-cloud", "off",
+		"--shared-profile", "off",
+		"--smart-mount", "off"); err != nil {
 		return err
 	}
 
-	if err := prlctl("set", d.MachineName,
-		"--shf-host-add", shareFolderName,
-		"--path", shareFolderPath); err != nil {
-		return err
+	if !d.NoShare {
+		if err := prlctl("set", d.MachineName,
+			"--shf-host-add", shareFolderName,
+			"--path", shareFolderPath); err != nil {
+			return err
+		}
 	}
 
 	log.Infof("Starting Parallels Desktop VM...")
@@ -370,6 +377,10 @@ func (d *Driver) GetCreateFlags() []mcnflag.Flag {
 			Usage:  "The URL of the boot2docker image. Defaults to the latest available version",
 			Value:  defaultBoot2DockerURL,
 		},
+		mcnflag.BoolFlag{
+			Name:  "parallels-no-share",
+			Usage: "Disable the mount of your home directory",
+		},
 	}
 }
 
@@ -385,6 +396,7 @@ func (d *Driver) SetConfigFromFlags(opts drivers.DriverOptions) error {
 	d.SwarmDiscovery = opts.String("swarm-discovery")
 	d.SSHUser = "docker"
 	d.SSHPort = 22
+	d.NoShare = opts.Bool("parallels-no-share")
 
 	return nil
 }
@@ -418,8 +430,10 @@ func (d *Driver) Start() error {
 	}
 
 	// Mount Share Folder
-	if err := d.mountShareFolder(shareFolderName, shareFolderPath); err != nil {
-		return err
+	if !d.NoShare {
+		if err := d.mountShareFolder(shareFolderName, shareFolderPath); err != nil {
+			return err
+		}
 	}
 
 	return nil
@@ -493,18 +507,26 @@ func (d *Driver) diskPath() string {
 }
 
 func (d *Driver) mountShareFolder(shareName string, mountPoint string) error {
-	cmd := "sudo mkdir -p " + mountPoint + " && sudo mount -t prl_fs " + shareName + " " + mountPoint
-
+	// Check the host path is available
 	if _, err := os.Stat(mountPoint); err != nil {
 		if os.IsNotExist(err) {
 			log.Infof("Host path '%s' does not exist. Skipping mount to VM...", mountPoint)
-		} else {
-			return err
+			return nil
 		}
-	} else {
-		if _, err := drivers.RunSSHCommandFromDriver(d, cmd); err != nil {
-			return fmt.Errorf("Error mounting shared folder: %s", err)
-		}
+		return err
+	}
+
+	// Ensure that share is available on the guest side
+	checkCmd := "sudo modprobe prl_fs && grep -w " + shareName + " /proc/fs/prl_fs/sf_list"
+	if _, err := drivers.RunSSHCommandFromDriver(d, checkCmd); err != nil {
+		log.Infof("Shared folder '%s' is unavailable. Skipping mount to VM...", shareName)
+		return nil
+	}
+
+	// Mount shared folder
+	mountCmd := "sudo mkdir -p " + mountPoint + " && sudo mount -t prl_fs " + shareName + " " + mountPoint
+	if _, err := drivers.RunSSHCommandFromDriver(d, mountCmd); err != nil {
+		return fmt.Errorf("Error mounting shared folder: %s", err)
 	}
 
 	return nil
