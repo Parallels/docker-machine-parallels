@@ -1,22 +1,105 @@
 # Docker Machine Parallels Driver
 
-### PREVIEW
-This is a pre-release version of Parallels Driver for Docker Machine.
-Work is still in progress.
+This is a plugin for [Docker Machine](https://docs.docker.com/machine/) allowing
+to create Docker hosts locally on [Parallels Desktop for Mac](http://www.parallels.com/products/desktop/)
 
-This is a plugin for Docker Machine, wich is gonna be compatible with Docker
-Machine v0.5.0.
-Refer to this PR for more details: https://github.com/docker/machine/pull/1902
+## Requirements
+* OS X 10.9+
+* [Docker Machine](https://docs.docker.com/machine/) 0.5.0+ (is bundled to
+  [Docker Toolbox](https://www.docker.com/docker-toolbox) 1.9.0+)
+* [Parallels Desktop](http://www.parallels.com/products/desktop/) 11.0.0+ **Pro** or
+**Business** edition (_Standard edition is not supported!_)
 
-## Build
+## Installation
+To install this plugin, download the binary `docker-machine-driver-parallels`
+and  make it available by `$PATH`, for example by putting it to `/usr/local/bin/`:
+
+```console
+$ curl -L https://github.com/Parallels/docker-machine-parallels/releases/download/v1.0.0/docker-machine-driver-parallels > /usr/local/bin/docker-machine-driver-parallels
+
+$ chmod +x /usr/local/bin/docker-machine-driver-parallels
+```
+
+The latest version of `docker-machine-driver-parallels` binary is available on
+the ["Releases"](https://github.com/Parallels/docker-machine-parallels/releases) page.
+
+## Usage
+Official documentation for Docker Machine [is available here](https://docs.docker.com/machine/).
+
+To create a Parallels Desktop virtual machine for Docker purposes just run this
+command:
+
+```
+$ docker-machine create --driver=parallels prl-dev
+```
+
+Available options:
+
+ - `--parallels-boot2docker-url`: The URL of the boot2docker image.
+ - `--parallels-disk-size`: Size of disk for the host VM (in MB).
+ - `--parallels-memory`: Size of memory for the host VM (in MB).
+ - `--parallels-cpu-count`: Number of CPUs to use to create the VM (-1 to use the number of CPUs available).
+ - `--parallels-no-share`: Disable the sharing of `/Users` directory
+
+The `--parallels-boot2docker-url` flag takes a few different forms. By
+default, if no value is specified for this flag, Machine will check locally for
+a boot2docker ISO. If one is found, that will be used as the ISO for the
+created machine. If one is not found, the latest ISO release available on
+[boot2docker/boot2docker](https://github.com/boot2docker/boot2docker) will be
+downloaded and stored locally for future use. Note that this means you must run
+`docker-machine upgrade` deliberately on a machine if you wish to update the "cached"
+boot2docker ISO.
+
+This is the default behavior (when `--parallels-boot2docker-url=""`), but the
+option also supports specifying ISOs by the `http://` and `file://` protocols.
+
+Environment variables and default values:
+
+| CLI option                    | Environment variable        | Default                  |
+|-------------------------------|-----------------------------|--------------------------|
+| `--parallels-boot2docker-url` | `PARALLELS_BOOT2DOCKER_URL` | *Latest boot2docker url* |
+| `--parallels-cpu-count`       | `PARALLELS_CPU_COUNT`       | `1`                      |
+| `--parallels-disk-size`       | `PARALLELS_DISK_SIZE`       | `20000`                  |
+| `--parallels-memory`          | `PARALLELS_MEMORY_SIZE`     | `1024`                   |
+| `--parallels-no-share`        | -                           | `false`                  |
+
+## Development
+
+### Build from Source
+If you wish to work on Parallels Driver for Docker machine, you'll first need
+[Go](http://www.golang.org) installed (version 1.5+ is required).
+Make sure Go is properly installed, including setting up a [GOPATH](http://golang.org/doc/code.html#GOPATH).
+
+Run these commands to build the plugin binary:
 
 ```bash
 $ go get -d github.com/Parallels/docker-machine-parallels
 $ cd $GOPATH/github.com/Parallels/docker-machine-parallels
-$ make
+$ make build
 ```
 
-The binary will appear in the working directory. Just make it available on the `$PATH`
+After the build is complete, `bin/docker-machine-driver-parallels` binary will
+be created. If you want to copy it to the `${GOPATH}/bin/`, run `make install`.
+
+### Acceptance Tests
+
+We use [BATS](https://github.com/sstephenson/bats) for acceptance testing, so,
+[install it](https://github.com/sstephenson/bats#installing-bats-from-source) first.
+
+You also need to build the plugin binary by calling `make build`.
+
+Then you can run acceptance tests using this command:
+
+```bash
+$ make test-acceptance
+```
+
+Acceptance tests will invoke the general `docker-machine` binary available by
+`$PATH`. If you want to specify it explicitly, just set `MACHINE_BINARY` env variable:
+
+```bash
+$ MACHINE_BINARY=/path/to/docker-machine make test-acceptance
+```
 
 ## Authors
 
