@@ -1,1 +1,2 @@
 docker-machine-driver-parallels
+*.log

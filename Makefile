@@ -11,4 +11,7 @@ clean:
 install: bin/docker-machine-driver-parallels
 	cp -f ./bin/docker-machine-driver-parallels $(GOPATH)/bin/
 
-.PHONY: clean build install
+test-acceptance:
+	test/integration/run-bats.sh test/integration/bats/
+
+.PHONY: clean build install test-acceptance
