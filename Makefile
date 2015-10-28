@@ -1,12 +1,17 @@
 default: build
 
-build:
-	go build -i -o docker-machine-driver-parallels ./bin
+bin/docker-machine-driver-parallels:
+	go build -i -o ./bin/docker-machine-driver-parallels ./bin
+
+build: clean bin/docker-machine-driver-parallels
 
 clean:
-	$(RM) docker-machine-driver-parallels
+	$(RM) bin/docker-machine-driver-parallels
 
-install: build
-	cp -r ./docker-machine-driver-parallels /usr/local/bin/
+install: bin/docker-machine-driver-parallels
+	cp -f ./bin/docker-machine-driver-parallels $(GOPATH)/bin/
 
-.PHONY: install
+test-acceptance:
+	test/integration/run-bats.sh test/integration/bats/
+
+.PHONY: clean build install test-acceptance
