@@ -78,7 +78,7 @@ fi
 
 set +e
 pkill docker-machine
-if [[ $? -eq 0 ]]; then
+if [[ $? -gt 1 ]]; then
     EXIT_STATUS=1
 fi
 set -e
