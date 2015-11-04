@@ -6,5 +6,5 @@ import (
 )
 
 func main() {
-	plugin.RegisterDriver(new(parallels.Driver))
+	plugin.RegisterDriver(parallels.NewDriver("", ""))
 }

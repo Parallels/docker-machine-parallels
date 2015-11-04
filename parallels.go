@@ -50,9 +50,11 @@ func NewDriver(hostName, storePath string) *Driver {
 			MachineName: hostName,
 			StorePath:   storePath,
 		},
-		Memory:   defaultMemory,
-		CPU:      defaultCPU,
-		DiskSize: defaultDiskSize,
+		CPU:            defaultCPU,
+		Memory:         defaultMemory,
+		DiskSize:       defaultDiskSize,
+		Boot2DockerURL: defaultBoot2DockerURL,
+		NoShare:        defaultNoShare,
 	}
 }
 
