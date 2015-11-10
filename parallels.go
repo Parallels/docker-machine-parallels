@@ -78,8 +78,18 @@ func (d *Driver) Create() error {
 
 	log.Infof("Creating Parallels Desktop VM...")
 
+	ver, err := d.getParallelsVersion()
+	if err != nil {
+		return err
+	}
+
+	distribution := "boot2docker"
+	if ver < 11 {
+		distribution = "linux-2.6"
+	}
+
 	if err := prlctl("create", d.MachineName,
-		"--distribution", "boot2docker",
+		"--distribution", distribution,
 		"--dst", d.ResolveStorePath("."),
 		"--no-hdd"); err != nil {
 		return err
@@ -136,20 +146,27 @@ func (d *Driver) Create() error {
 		return err
 	}
 
-	// Enable headless mode
-	if err := prlctl("set", d.MachineName,
-		"--startup-view", "headless"); err != nil {
-		return err
+	if ver >= 11 {
+		// Enable headless mode
+		if err := prlctl("set", d.MachineName,
+			"--startup-view", "headless"); err != nil {
+			return err
+		}
 	}
 
 	// Configure Shared Folders
 	if err := prlctl("set", d.MachineName,
 		"--shf-host", "on",
-		"--shf-host-defined", "off",
 		"--shared-cloud", "off",
 		"--shared-profile", "off",
 		"--smart-mount", "off"); err != nil {
 		return err
+	}
+	if ver >= 11 {
+		if err := prlctl("set", d.MachineName,
+			"--shf-host-defined", "off"); err != nil {
+			return err
+		}
 	}
 
 	if !d.NoShare {
@@ -302,8 +319,13 @@ func (d *Driver) PreCreateCheck() error {
 		return err
 	}
 
+	if ver < 10 {
+		return fmt.Errorf("Driver \"parallels\" supports only Parallels Desktop 10 and higher. You use: Parallels Desktop %d.", ver)
+	}
+
 	if ver < 11 {
-		return fmt.Errorf("Driver \"parallels\" supports only Parallels Desktop 11 and higher. You use: Parallels Desktop %d.", ver)
+		log.Debugf("Found Parallels Desktop version: %d", ver)
+		return nil
 	}
 
 	// Check Parallels Desktop edition
