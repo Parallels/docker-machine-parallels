@@ -325,6 +325,8 @@ func (d *Driver) PreCreateCheck() error {
 
 	if ver < 11 {
 		log.Debugf("Found Parallels Desktop version: %d", ver)
+		log.Infof("Driver \"parallels\" integration with Parallels Desktop 10 is maintained by open source community.")
+		log.Infof("For Parallels supported configuration you should use it with Parallels Desktop 11 or later (Pro or Business edition).")
 		return nil
 	}
 
