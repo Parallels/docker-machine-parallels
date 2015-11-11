@@ -14,7 +14,7 @@ to create Docker hosts locally on [Parallels Desktop for Mac](http://www.paralle
 Install via Homebrew:
 
 ```console
-brew install docker-machine-parallels
+$ brew install docker-machine-parallels
 ```
 
 To install this plugin manually, download the binary `docker-machine-driver-parallels`
