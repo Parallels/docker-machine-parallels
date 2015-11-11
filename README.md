@@ -21,7 +21,7 @@ To install this plugin manually, download the binary `docker-machine-driver-para
 and  make it available by `$PATH`, for example by putting it to `/usr/local/bin/`:
 
 ```console
-$ curl -L https://github.com/Parallels/docker-machine-parallels/releases/download/v1.0.0/docker-machine-driver-parallels > /usr/local/bin/docker-machine-driver-parallels
+$ curl -L https://github.com/Parallels/docker-machine-parallels/releases/download/v1.0.1/docker-machine-driver-parallels > /usr/local/bin/docker-machine-driver-parallels
 
 $ chmod +x /usr/local/bin/docker-machine-driver-parallels
 ```
