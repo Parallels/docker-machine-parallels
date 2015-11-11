@@ -108,8 +108,6 @@ func (d *Driver) Create() error {
 		"--cpus", fmt.Sprintf("%d", cpus),
 		"--memsize", fmt.Sprintf("%d", d.Memory),
 		"--cpu-hotplug", "off",
-		"--nested-virt", "on",
-		"--pmu-virt", "on",
 		"--on-window-close", "keep-running",
 		"--longer-battery-life", "on",
 		"--3d-accelerate", "off",
