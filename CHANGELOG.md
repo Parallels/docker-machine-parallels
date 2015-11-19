@@ -2,7 +2,7 @@
 
 ## 1.0.1 (2015-11-11)
 - Add unofficial support of Parallels Desktop 10 [GH-10]
-- Remove `--nested-virt` and `--pmu-virt` from default VM settings
+- Remove `--nested-virt` and `--pmu-virt` from default VM settings [GH-13]
 
 ## 1.0.0 (2015-11-04)
 
