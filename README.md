@@ -5,10 +5,15 @@ to create Docker hosts locally on [Parallels Desktop for Mac](http://www.paralle
 
 ## Requirements
 * OS X 10.9+
-* [Docker Machine](https://docs.docker.com/machine/) 0.5.0+ (is bundled to
-  [Docker Toolbox](https://www.docker.com/docker-toolbox) 1.9.0+)
+* [Docker Machine](https://docs.docker.com/machine/) 0.5.0 (is bundled to
+  [Docker Toolbox](https://www.docker.com/docker-toolbox) 1.9.0)
 * [Parallels Desktop](http://www.parallels.com/products/desktop/) 11.0.0+ **Pro** or
 **Business** edition (_Standard edition is not supported!_)
+
+:exclamation: **Warning:** Parallels driver versions v1.0.* are compatible **only 
+with Docker Machine v0.5.0** ([issue link](https://github.com/docker/machine/issues/2325)).
+If you use Docker Machine v0.5.1 or higher, you should install the latest version
+of [`docker-machine-driver-parallels`](https://github.com/Parallels/docker-machine-parallels/releases)
 
 ## Installation
 Install via Homebrew:
