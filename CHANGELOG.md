@@ -1,5 +1,8 @@
 # Changelog
 
+## 1.0.2 (2015-11-20)
+- Fixed issue with relative path in `MACHINE_STORAGE_PATH` [GH-17]
+
 ## 1.0.1 (2015-11-11)
 - Add unofficial support of Parallels Desktop 10 [GH-10]
 - Remove `--nested-virt` and `--pmu-virt` from default VM settings [GH-13]
