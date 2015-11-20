@@ -5,15 +5,15 @@ to create Docker hosts locally on [Parallels Desktop for Mac](http://www.paralle
 
 ## Requirements
 * OS X 10.9+
-* [Docker Machine](https://docs.docker.com/machine/) 0.5.0 (is bundled to
-  [Docker Toolbox](https://www.docker.com/docker-toolbox) 1.9.0)
+* [Docker Machine](https://docs.docker.com/machine/) 0.5.1+ (is bundled to
+  [Docker Toolbox](https://www.docker.com/docker-toolbox) 1.9.0+)
 * [Parallels Desktop](http://www.parallels.com/products/desktop/) 11.0.0+ **Pro** or
 **Business** edition (_Standard edition is not supported!_)
 
-:exclamation: **Warning:** Parallels driver versions v1.0.* are compatible **only 
-with Docker Machine v0.5.0** ([issue link](https://github.com/docker/machine/issues/2325)).
-If you use Docker Machine v0.5.1 or higher, you should install the latest version
-of [`docker-machine-driver-parallels`](https://github.com/Parallels/docker-machine-parallels/releases)
+:exclamation: **Warning:** The latest version of Parallels driver **is not
+compatible** with Docker Machine **v0.5.0** ([issue link](https://github.com/docker/machine/issues/2325)).
+If you use Docker Machine v0.5.0, you should either update it to the latest version
+or use `docker-machine-driver-parallels` [v1.0.2](https://github.com/Parallels/docker-machine-parallels/releases/tag/v1.0.2)
 
 ## Installation
 Install via Homebrew:
@@ -26,7 +26,7 @@ To install this plugin manually, download the binary `docker-machine-driver-para
 and  make it available by `$PATH`, for example by putting it to `/usr/local/bin/`:
 
 ```console
-$ curl -L https://github.com/Parallels/docker-machine-parallels/releases/download/v1.0.1/docker-machine-driver-parallels > /usr/local/bin/docker-machine-driver-parallels
+$ curl -L https://github.com/Parallels/docker-machine-parallels/releases/download/v1.1.0/docker-machine-driver-parallels > /usr/local/bin/docker-machine-driver-parallels
 
 $ chmod +x /usr/local/bin/docker-machine-driver-parallels
 ```
