@@ -88,9 +88,10 @@ func (d *Driver) Create() error {
 		distribution = "linux-2.6"
 	}
 
+	absStorePath, _ := filepath.Abs(d.ResolveStorePath("."))
 	if err := prlctl("create", d.MachineName,
 		"--distribution", distribution,
-		"--dst", d.ResolveStorePath("."),
+		"--dst", absStorePath,
 		"--no-hdd"); err != nil {
 		return err
 	}
@@ -115,11 +116,12 @@ func (d *Driver) Create() error {
 		return err
 	}
 
+	absISOPath, _ := filepath.Abs(d.ResolveStorePath(isoFilename))
 	if err := prlctl("set", d.MachineName,
 		"--device-set", "cdrom0",
 		"--iface", "sata",
 		"--position", "0",
-		"--image", d.ResolveStorePath(isoFilename)); err != nil {
+		"--image", absISOPath); err != nil {
 		return err
 	}
 
@@ -527,7 +529,8 @@ func (d *Driver) getIPfromDHCPLease() (string, error) {
 }
 
 func (d *Driver) diskPath() string {
-	return d.ResolveStorePath("disk.hdd")
+	absDiskPath, _ := filepath.Abs(d.ResolveStorePath("disk.hdd"))
+	return absDiskPath
 }
 
 func (d *Driver) mountShareFolder(shareName string, mountPoint string) error {
