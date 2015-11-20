@@ -1,5 +1,8 @@
 # Changelog
 
+## 1.1.0 (2015-11-20)
+- Compatibility with Docker Machine v0.5.1+
+
 ## 1.0.2 (2015-11-20)
 - Fixed issue with relative path in `MACHINE_STORAGE_PATH` [GH-17]
 
