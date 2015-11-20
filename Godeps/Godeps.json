@@ -13,18 +13,18 @@
 		},
 		{
 			"ImportPath": "github.com/docker/machine/commands/mcndirs",
-			"Comment": "v0.5.0",
-			"Rev": "04cfa58445f063509699cdde41080a410330c4df"
+			"Comment": "v0.5.1",
+			"Rev": "7e8e38e1485187c0064e054029bb1cc68c87d39a"
 		},
 		{
 			"ImportPath": "github.com/docker/machine/drivers/none",
-			"Comment": "v0.5.0",
-			"Rev": "04cfa58445f063509699cdde41080a410330c4df"
+			"Comment": "v0.5.1",
+			"Rev": "7e8e38e1485187c0064e054029bb1cc68c87d39a"
 		},
 		{
 			"ImportPath": "github.com/docker/machine/libmachine",
-			"Comment": "v0.5.0",
-			"Rev": "04cfa58445f063509699cdde41080a410330c4df"
+			"Comment": "v0.5.1",
+			"Rev": "7e8e38e1485187c0064e054029bb1cc68c87d39a"
 		},
 		{
 			"ImportPath": "golang.org/x/crypto/curve25519",
