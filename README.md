@@ -6,7 +6,7 @@ to create Docker hosts locally on [Parallels Desktop for Mac](http://www.paralle
 ## Requirements
 * OS X 10.9+
 * [Docker Machine](https://docs.docker.com/machine/) 0.5.1+ (is bundled to
-  [Docker Toolbox](https://www.docker.com/docker-toolbox) 1.9.0+)
+  [Docker Toolbox](https://www.docker.com/docker-toolbox) 1.9.1+)
 * [Parallels Desktop](http://www.parallels.com/products/desktop/) 11.0.0+ **Pro** or
 **Business** edition (_Standard edition is not supported!_)
 
