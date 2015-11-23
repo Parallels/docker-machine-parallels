@@ -41,7 +41,7 @@ To create a Parallels Desktop virtual machine for Docker purposes just run this
 command:
 
 ```
-$ docker-machine create --driver=parallels prl-dev
+$ docker-machine create --driver=parallels  --engine-storage-driver overlay  prl-dev
 ```
 
 Available options:
