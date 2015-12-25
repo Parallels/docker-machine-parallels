@@ -48,7 +48,7 @@ Available options:
 
  - `--parallels-boot2docker-url`: The URL of the boot2docker image.
  - `--parallels-disk-size`: Size of disk for the host VM (in MB).
- - `--parallels-memory`: Size of memory for the host VM (in MB).
+ - `--parallels-memory-size`: Size of memory for the host VM (in MB).
  - `--parallels-cpu-count`: Number of CPUs to use to create the VM (-1 to use the number of CPUs available).
  - `--parallels-no-share`: Disable the sharing of `/Users` directory
 
@@ -71,7 +71,7 @@ Environment variables and default values:
 | `--parallels-boot2docker-url` | `PARALLELS_BOOT2DOCKER_URL` | *Latest boot2docker url* |
 | `--parallels-cpu-count`       | `PARALLELS_CPU_COUNT`       | `1`                      |
 | `--parallels-disk-size`       | `PARALLELS_DISK_SIZE`       | `20000`                  |
-| `--parallels-memory`          | `PARALLELS_MEMORY_SIZE`     | `1024`                   |
+| `--parallels-memory-size`     | `PARALLELS_MEMORY_SIZE`     | `1024`                   |
 | `--parallels-no-share`        | -                           | `false`                  |
 
 ## Development
