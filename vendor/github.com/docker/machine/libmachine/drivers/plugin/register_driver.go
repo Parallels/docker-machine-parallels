@@ -8,15 +8,15 @@ import (
 	"os"
 	"time"
 
-	"github.com/docker/machine/libmachine"
 	"github.com/docker/machine/libmachine/drivers"
 	"github.com/docker/machine/libmachine/drivers/plugin/localbinary"
 	"github.com/docker/machine/libmachine/drivers/rpc"
+	"github.com/docker/machine/libmachine/log"
 	"github.com/docker/machine/libmachine/version"
 )
 
 var (
-	heartbeatTimeout = 500 * time.Millisecond
+	heartbeatTimeout = 10 * time.Second
 )
 
 func RegisterDriver(d drivers.Driver) {
@@ -29,10 +29,12 @@ Please use this plugin through the main 'docker-machine' binary.
 		os.Exit(1)
 	}
 
-	libmachine.SetDebug(true)
+	log.SetDebug(true)
+	os.Setenv("MACHINE_DEBUG", "1")
 
 	rpcd := rpcdriver.NewRPCServerDriver(d)
-	rpc.Register(rpcd)
+	rpc.RegisterName(rpcdriver.RPCServiceNameV0, rpcd)
+	rpc.RegisterName(rpcdriver.RPCServiceNameV1, rpcd)
 	rpc.HandleHTTP()
 
 	listener, err := net.Listen("tcp", "127.0.0.1:0")
@@ -49,10 +51,12 @@ Please use this plugin through the main 'docker-machine' binary.
 	for {
 		select {
 		case <-rpcd.CloseCh:
+			log.Debug("Closing plugin on server side")
 			os.Exit(0)
 		case <-rpcd.HeartbeatCh:
 			continue
 		case <-time.After(heartbeatTimeout):
+			// TODO: Add heartbeat retry logic
 			os.Exit(1)
 		}
 	}
