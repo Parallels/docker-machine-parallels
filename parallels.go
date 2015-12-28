@@ -1,8 +1,6 @@
 package parallels
 
 import (
-	"archive/tar"
-	"bytes"
 	"fmt"
 	"io/ioutil"
 	"os"
@@ -561,7 +559,7 @@ func (d *Driver) mountShareFolder(shareName string, mountPoint string) error {
 
 // Make a boot2docker VM disk image.
 func (d *Driver) generateDiskImage(size int) error {
-	tarBuf, err := d.generateTar()
+	tarBuf, err := mcnutils.MakeDiskImage(d.publicSSHKeyPath())
 	if err != nil {
 		return err
 	}
@@ -615,50 +613,6 @@ func (d *Driver) generateDiskImage(size int) error {
 	}
 
 	return nil
-}
-
-// See https://github.com/boot2docker/boot2docker/blob/master/rootfs/rootfs/etc/rc.d/automount
-func (d *Driver) generateTar() (*bytes.Buffer, error) {
-	magicString := "boot2docker, please format-me"
-
-	buf := new(bytes.Buffer)
-	tw := tar.NewWriter(buf)
-
-	// magicString first so the automount script knows to format the disk
-	file := &tar.Header{Name: magicString, Size: int64(len(magicString))}
-	if err := tw.WriteHeader(file); err != nil {
-		return nil, err
-	}
-	if _, err := tw.Write([]byte(magicString)); err != nil {
-		return nil, err
-	}
-	// .ssh/key.pub => authorized_keys
-	file = &tar.Header{Name: ".ssh", Typeflag: tar.TypeDir, Mode: 0700}
-	if err := tw.WriteHeader(file); err != nil {
-		return nil, err
-	}
-	pubKey, err := ioutil.ReadFile(d.publicSSHKeyPath())
-	if err != nil {
-		return nil, err
-	}
-	file = &tar.Header{Name: ".ssh/authorized_keys", Size: int64(len(pubKey)), Mode: 0644}
-	if err := tw.WriteHeader(file); err != nil {
-		return nil, err
-	}
-	if _, err := tw.Write([]byte(pubKey)); err != nil {
-		return nil, err
-	}
-	file = &tar.Header{Name: ".ssh/authorized_keys2", Size: int64(len(pubKey)), Mode: 0644}
-	if err := tw.WriteHeader(file); err != nil {
-		return nil, err
-	}
-	if _, err := tw.Write([]byte(pubKey)); err != nil {
-		return nil, err
-	}
-	if err := tw.Close(); err != nil {
-		return nil, err
-	}
-	return buf, nil
 }
 
 // Detect Parallels Desktop major version
