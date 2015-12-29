@@ -97,7 +97,7 @@ load ${BASE_TEST_DIR}/helpers.bash
   run machine env $NAME
   echo ${output}
   [ "$status" -eq 1 ]
-  [[ ${output} == *"not running. Please start"* ]]
+  [[ ${output} == *"not running"* ]]
 }
 
 @test "$DRIVER: machine should not allow upgrade when stopped" {
