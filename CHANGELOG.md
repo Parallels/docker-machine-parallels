@@ -1,5 +1,9 @@
 # Changelog
 
+## 1.1.1 (2015-12-29)
+- Compatibility with Docker Machine v0.5.5+ [GH-33]
+- Add arguments `--version` and `--help` for plugin binary [GH-34]
+
 ## 1.1.0 (2015-11-20)
 - Compatibility with Docker Machine v0.5.1+
 
