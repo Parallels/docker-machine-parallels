@@ -1,6 +1,6 @@
 {
 	"ImportPath": "github.com/Parallels/docker-machine-parallels",
-	"GoVersion": "go1.5.1",
+	"GoVersion": "go1.5.2",
 	"Deps": [
 		{
 			"ImportPath": "github.com/docker/docker/pkg/term",
