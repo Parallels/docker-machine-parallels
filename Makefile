@@ -1,6 +1,3 @@
-# Support go1.5 vendoring (let us avoid messing with GOPATH or using godep)
-export GO15VENDOREXPERIMENT = 1
-
 GODEP_BIN := $(GOPATH)/bin/godep
 GODEP := $(shell [ -x $(GODEP_BIN) ] && echo $(GODEP_BIN) || echo '')
 
