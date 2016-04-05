@@ -253,19 +253,9 @@ func (d *Driver) GetIP() (string, error) {
 	return ip, nil
 }
 
-// GetMachineName returns the name of the machine
-func (d *Driver) GetMachineName() string {
-	return d.BaseDriver.MachineName
-}
-
 // GetSSHHostname returns hostname for use with ssh
 func (d *Driver) GetSSHHostname() (string, error) {
 	return d.GetIP()
-}
-
-// GetSSHPort returns port for use with ssh
-func (d *Driver) GetSSHPort() (int, error) {
-	return 22, nil
 }
 
 // GetSSHUsername returns username for use with ssh
