@@ -431,9 +431,7 @@ func (d *Driver) SetConfigFromFlags(opts drivers.DriverOptions) error {
 	d.Memory = opts.Int("parallels-memory")
 	d.DiskSize = opts.Int("parallels-disk-size")
 	d.Boot2DockerURL = opts.String("parallels-boot2docker-url")
-	d.SwarmMaster = opts.Bool("swarm-master")
-	d.SwarmHost = opts.String("swarm-host")
-	d.SwarmDiscovery = opts.String("swarm-discovery")
+	d.SetSwarmConfigFromFlags(opts)
 	d.SSHUser = "docker"
 	d.SSHPort = 22
 	d.NoShare = opts.Bool("parallels-no-share")
