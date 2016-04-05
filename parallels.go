@@ -138,16 +138,30 @@ func (d *Driver) Create() error {
 		return err
 	}
 
-	// Disable Time Sync feature because it has an issue with timezones.
-	// TODO: Turn it back as soon as Time Sync is fixed in Parallels Tools
-	if err := prlctl("set", d.MachineName, "--time-sync", "off"); err != nil {
-		return err
-	}
-
 	if ver >= 11 {
 		// Enable headless mode
 		if err := prlctl("set", d.MachineName,
 			"--startup-view", "headless"); err != nil {
+			return err
+		}
+
+		// Don't share any additional folders
+		if err := prlctl("set", d.MachineName,
+			"--shf-host-defined", "off"); err != nil {
+			return err
+		}
+
+		// Enable time sync, don't touch timezone (this part is buggy)
+		if err := prlctl("set", d.MachineName, "--time-sync", "on"); err != nil {
+			return err
+		}
+		if err := prlctl("set", d.MachineName,
+			"--disable-timezone-sync", "on"); err != nil {
+			return err
+		}
+	} else {
+		// Disable time sync feature because it has an issue with timezones.
+		if err := prlctl("set", d.MachineName, "--time-sync", "off"); err != nil {
 			return err
 		}
 	}
@@ -159,12 +173,6 @@ func (d *Driver) Create() error {
 		"--shared-profile", "off",
 		"--smart-mount", "off"); err != nil {
 		return err
-	}
-	if ver >= 11 {
-		if err := prlctl("set", d.MachineName,
-			"--shf-host-defined", "off"); err != nil {
-			return err
-		}
 	}
 
 	if !d.NoShare {
