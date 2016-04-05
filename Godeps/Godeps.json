@@ -1,6 +1,6 @@
 {
 	"ImportPath": "github.com/Parallels/docker-machine-parallels",
-	"GoVersion": "go1.5.2",
+	"GoVersion": "go1.6",
 	"Packages": [
 		"github.com/Parallels/docker-machine-parallels",
 		"github.com/Parallels/docker-machine-parallels/bin"
@@ -18,46 +18,46 @@
 		},
 		{
 			"ImportPath": "github.com/docker/machine/libmachine/drivers",
-			"Comment": "v0.5.5",
-			"Rev": "02c4254cb4c93a4bbb5dc4ca0467abeb12d72546"
+			"Comment": "v0.6.0",
+			"Rev": "e27fb87286cb8e7454183ce46a6e1e84b31965e9"
 		},
 		{
 			"ImportPath": "github.com/docker/machine/libmachine/log",
-			"Comment": "v0.5.5",
-			"Rev": "02c4254cb4c93a4bbb5dc4ca0467abeb12d72546"
+			"Comment": "v0.6.0",
+			"Rev": "e27fb87286cb8e7454183ce46a6e1e84b31965e9"
 		},
 		{
 			"ImportPath": "github.com/docker/machine/libmachine/mcnflag",
-			"Comment": "v0.5.5",
-			"Rev": "02c4254cb4c93a4bbb5dc4ca0467abeb12d72546"
+			"Comment": "v0.6.0",
+			"Rev": "e27fb87286cb8e7454183ce46a6e1e84b31965e9"
 		},
 		{
 			"ImportPath": "github.com/docker/machine/libmachine/mcnutils",
-			"Comment": "v0.5.5",
-			"Rev": "02c4254cb4c93a4bbb5dc4ca0467abeb12d72546"
+			"Comment": "v0.6.0",
+			"Rev": "e27fb87286cb8e7454183ce46a6e1e84b31965e9"
 		},
 		{
 			"ImportPath": "github.com/docker/machine/libmachine/ssh",
-			"Comment": "v0.5.5",
-			"Rev": "02c4254cb4c93a4bbb5dc4ca0467abeb12d72546"
+			"Comment": "v0.6.0",
+			"Rev": "e27fb87286cb8e7454183ce46a6e1e84b31965e9"
 		},
 		{
 			"ImportPath": "github.com/docker/machine/libmachine/state",
-			"Comment": "v0.5.5",
-			"Rev": "02c4254cb4c93a4bbb5dc4ca0467abeb12d72546"
+			"Comment": "v0.6.0",
+			"Rev": "e27fb87286cb8e7454183ce46a6e1e84b31965e9"
 		},
 		{
 			"ImportPath": "github.com/docker/machine/libmachine/version",
-			"Comment": "v0.5.5",
-			"Rev": "02c4254cb4c93a4bbb5dc4ca0467abeb12d72546"
+			"Comment": "v0.6.0",
+			"Rev": "e27fb87286cb8e7454183ce46a6e1e84b31965e9"
 		},
 		{
 			"ImportPath": "golang.org/x/crypto/curve25519",
-			"Rev": "0c93e1ff9f91f0c63bf17b123de503d023434fdd"
+			"Rev": "beef0f4390813b96e8e68fd78570396d0f4751fc"
 		},
 		{
 			"ImportPath": "golang.org/x/crypto/ssh",
-			"Rev": "0c93e1ff9f91f0c63bf17b123de503d023434fdd"
+			"Rev": "beef0f4390813b96e8e68fd78570396d0f4751fc"
 		}
 	]
 }
