@@ -64,14 +64,14 @@ func (d *Driver) Create() error {
 	)
 
 	b2dutils := mcnutils.NewB2dUtils(d.StorePath)
-	if err := b2dutils.CopyIsoToMachineDir(d.Boot2DockerURL, d.MachineName); err != nil {
+	if err = b2dutils.CopyIsoToMachineDir(d.Boot2DockerURL, d.MachineName); err != nil {
 		return err
 	}
 
 	log.Infof("Creating SSH key...")
 	sshKeyPath := d.GetSSHKeyPath()
 	log.Debugf("SSH key: %s", sshKeyPath)
-	if err := ssh.GenerateSSHKey(sshKeyPath); err != nil {
+	if err = ssh.GenerateSSHKey(sshKeyPath); err != nil {
 		return err
 	}
 
@@ -88,7 +88,7 @@ func (d *Driver) Create() error {
 	}
 
 	absStorePath, _ := filepath.Abs(d.ResolveStorePath("."))
-	if err := prlctl("create", d.MachineName,
+	if err = prlctl("create", d.MachineName,
 		"--distribution", distribution,
 		"--dst", absStorePath,
 		"--no-hdd"); err != nil {
@@ -103,7 +103,7 @@ func (d *Driver) Create() error {
 		cpus = 32
 	}
 
-	if err := prlctl("set", d.MachineName,
+	if err = prlctl("set", d.MachineName,
 		"--select-boot-device", "off",
 		"--cpus", fmt.Sprintf("%d", cpus),
 		"--memsize", fmt.Sprintf("%d", d.Memory),
@@ -116,7 +116,7 @@ func (d *Driver) Create() error {
 	}
 
 	absISOPath, _ := filepath.Abs(d.ResolveStorePath(isoFilename))
-	if err := prlctl("set", d.MachineName,
+	if err = prlctl("set", d.MachineName,
 		"--device-set", "cdrom0",
 		"--iface", "sata",
 		"--position", "0",
@@ -125,7 +125,7 @@ func (d *Driver) Create() error {
 	}
 
 	// Create a small plain disk. It will be converted and expanded later
-	if err := prlctl("set", d.MachineName,
+	if err = prlctl("set", d.MachineName,
 		"--device-add", "hdd",
 		"--iface", "sata",
 		"--position", "1",
@@ -135,40 +135,40 @@ func (d *Driver) Create() error {
 		return err
 	}
 
-	if err := d.generateDiskImage(d.DiskSize); err != nil {
+	if err = d.generateDiskImage(d.DiskSize); err != nil {
 		return err
 	}
 
 	if ver >= 11 {
 		// Enable headless mode
-		if err := prlctl("set", d.MachineName,
+		if err = prlctl("set", d.MachineName,
 			"--startup-view", "headless"); err != nil {
 			return err
 		}
 
 		// Don't share any additional folders
-		if err := prlctl("set", d.MachineName,
+		if err = prlctl("set", d.MachineName,
 			"--shf-host-defined", "off"); err != nil {
 			return err
 		}
 
 		// Enable time sync, don't touch timezone (this part is buggy)
-		if err := prlctl("set", d.MachineName, "--time-sync", "on"); err != nil {
+		if err = prlctl("set", d.MachineName, "--time-sync", "on"); err != nil {
 			return err
 		}
-		if err := prlctl("set", d.MachineName,
+		if err = prlctl("set", d.MachineName,
 			"--disable-timezone-sync", "on"); err != nil {
 			return err
 		}
 	} else {
 		// Disable time sync feature because it has an issue with timezones.
-		if err := prlctl("set", d.MachineName, "--time-sync", "off"); err != nil {
+		if err = prlctl("set", d.MachineName, "--time-sync", "off"); err != nil {
 			return err
 		}
 	}
 
 	// Configure Shared Folders
-	if err := prlctl("set", d.MachineName,
+	if err = prlctl("set", d.MachineName,
 		"--shf-host", "on",
 		"--shared-cloud", "off",
 		"--shared-profile", "off",
@@ -177,7 +177,7 @@ func (d *Driver) Create() error {
 	}
 
 	if !d.NoShare {
-		if err := prlctl("set", d.MachineName,
+		if err = prlctl("set", d.MachineName,
 			"--shf-host-add", shareFolderName,
 			"--path", shareFolderPath); err != nil {
 			return err
@@ -187,7 +187,7 @@ func (d *Driver) Create() error {
 	log.Infof("Starting Parallels Desktop VM...")
 
 	// Don't use Start() since it expects to have a dhcp lease already
-	if err := prlctl("start", d.MachineName); err != nil {
+	if err = prlctl("start", d.MachineName); err != nil {
 		return err
 	}
 
@@ -445,7 +445,7 @@ func (d *Driver) Start() error {
 
 	switch s {
 	case state.Stopped, state.Saved, state.Paused:
-		if err := prlctl("start", d.MachineName); err != nil {
+		if err = prlctl("start", d.MachineName); err != nil {
 			return err
 		}
 		log.Infof("Waiting for VM to start...")
@@ -580,7 +580,7 @@ func (d *Driver) generateDiskImage(size int) error {
 	//Expand the initial image if needed
 	if bufLen := int64(tarBuf.Len()); bufLen > minSizeBytes {
 		bufLenMBytes := bufLen>>20 + 1
-		if err := prldisktool("resize",
+		if err = prldisktool("resize",
 			"--hdd", d.diskPath(),
 			"--size", fmt.Sprintf("%d", bufLenMBytes)); err != nil {
 			return err
