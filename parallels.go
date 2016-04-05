@@ -3,6 +3,7 @@ package parallels
 import (
 	"fmt"
 	"io/ioutil"
+	"net"
 	"os"
 	"path/filepath"
 	"regexp"
@@ -203,6 +204,13 @@ func (d *Driver) Create() error {
 
 		if ip != "" {
 			log.Debugf("Got an ip: %s", ip)
+			conn, err := net.DialTimeout("tcp", fmt.Sprintf("%s:%d", ip, d.SSHPort), time.Duration(2*time.Second))
+			if err != nil {
+				log.Debugf("SSH Daemon not responding yet: %s", err)
+				time.Sleep(2 * time.Second)
+				continue
+			}
+			conn.Close()
 			break
 		}
 	}
