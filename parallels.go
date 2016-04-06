@@ -458,7 +458,7 @@ func (d *Driver) Start() error {
 		log.Infof("VM not in restartable state")
 	}
 
-	if err := drivers.WaitForSSH(d); err != nil {
+	if err = drivers.WaitForSSH(d); err != nil {
 		return err
 	}
 
@@ -500,7 +500,7 @@ func (d *Driver) getIPfromDHCPLease() (string, error) {
 
 	DHCPLeaseFile := "/Library/Preferences/Parallels/parallels_dhcp_leases"
 
-	stdout, err := prlctlOut("list", "-i", d.MachineName)
+	stdout, _, err := prlctlOutErr("list", "-i", d.MachineName)
 	macRe := regexp.MustCompile("net0.* mac=([0-9A-F]{12}) card=.*")
 	macMatch := macRe.FindAllStringSubmatch(stdout, 1)
 
@@ -660,7 +660,7 @@ func (d *Driver) getParallelsEdition() (string, error) {
 	// Parse Parallels Desktop version
 	res := reParallelsEdition.FindStringSubmatch(string(stdout))
 	if res == nil {
-		return "", fmt.Errorf("Parallels Desktop Edition could not be fetched!")
+		return "", fmt.Errorf("Parallels Desktop edition could not be fetched!")
 	}
 
 	return res[1], nil
