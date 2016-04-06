@@ -41,7 +41,7 @@ func runCmd(cmdName string, args []string, notFound error) error {
 	}
 	log.Debugf("executing: %v %v", cmdName, strings.Join(args, " "))
 	if err := cmd.Run(); err != nil {
-		if ee, ok := err.(*exec.Error); ok && ee == exec.ErrNotFound {
+		if ee, ok := err.(*exec.Error); ok && ee.Err == exec.ErrNotFound {
 			return notFound
 		}
 		return fmt.Errorf("%v %v failed: %v", cmdName, strings.Join(args, " "), err)
@@ -58,7 +58,7 @@ func runCmdOut(cmdName string, args []string, notFound error) (string, error) {
 
 	b, err := cmd.Output()
 	if err != nil {
-		if ee, ok := err.(*exec.Error); ok && ee == exec.ErrNotFound {
+		if ee, ok := err.(*exec.Error); ok && ee.Err == exec.ErrNotFound {
 			err = notFound
 		}
 	}
@@ -74,7 +74,7 @@ func runCmdOutErr(cmdName string, args []string, notFound error) (string, string
 	cmd.Stderr = &stderr
 	err := cmd.Run()
 	if err != nil {
-		if ee, ok := err.(*exec.Error); ok && ee == exec.ErrNotFound {
+		if ee, ok := err.(*exec.Error); ok && ee.Err == exec.ErrNotFound {
 			err = notFound
 		}
 	}
