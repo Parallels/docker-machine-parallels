@@ -3,7 +3,6 @@ package parallels
 import (
 	"bytes"
 	"errors"
-	"fmt"
 	"os"
 	"os/exec"
 	"regexp"
@@ -33,48 +32,21 @@ var (
 	prldisktoolCmd         = "prl_disk_tool"
 )
 
-func runCmd(cmdName string, args []string, notFound error) error {
+func runCmd(cmdName string, args []string, notFound error) (string, string, error) {
 	cmd := exec.Command(cmdName, args...)
-	if os.Getenv("DEBUG") != "" {
+	if os.Getenv("MACHINE_DEBUG") != "" {
 		cmd.Stdout = os.Stdout
 		cmd.Stderr = os.Stderr
 	}
-	log.Debugf("executing: %v %v", cmdName, strings.Join(args, " "))
-	if err := cmd.Run(); err != nil {
-		if ee, ok := err.(*exec.Error); ok && ee == exec.ErrNotFound {
-			return notFound
-		}
-		return fmt.Errorf("%v %v failed: %v", cmdName, strings.Join(args, " "), err)
-	}
-	return nil
-}
 
-func runCmdOut(cmdName string, args []string, notFound error) (string, error) {
-	cmd := exec.Command(cmdName, args...)
-	if os.Getenv("DEBUG") != "" {
-		cmd.Stderr = os.Stderr
-	}
-	log.Debugf("executing: %v %v", cmdName, strings.Join(args, " "))
-
-	b, err := cmd.Output()
-	if err != nil {
-		if ee, ok := err.(*exec.Error); ok && ee == exec.ErrNotFound {
-			err = notFound
-		}
-	}
-	return string(b), err
-}
-
-func runCmdOutErr(cmdName string, args []string, notFound error) (string, string, error) {
-	cmd := exec.Command(cmdName, args...)
-	log.Debugf("executing: %v %v", cmdName, strings.Join(args, " "))
 	var stdout bytes.Buffer
 	var stderr bytes.Buffer
-	cmd.Stdout = &stdout
-	cmd.Stderr = &stderr
+	cmd.Stdout, cmd.Stderr = &stdout, &stderr
+	log.Debugf("executing: %v %v", cmdName, strings.Join(args, " "))
+
 	err := cmd.Run()
 	if err != nil {
-		if ee, ok := err.(*exec.Error); ok && ee == exec.ErrNotFound {
+		if ee, ok := err.(*exec.Error); ok && ee.Err == exec.ErrNotFound {
 			err = notFound
 		}
 	}
@@ -82,29 +54,24 @@ func runCmdOutErr(cmdName string, args []string, notFound error) (string, string
 }
 
 func prlctl(args ...string) error {
-	return runCmd(prlctlCmd, args, ErrPrlctlNotFound)
-}
-
-func prlctlOut(args ...string) (string, error) {
-	return runCmdOut(prlctlCmd, args, ErrPrlctlNotFound)
+	_, _, err := runCmd(prlctlCmd, args, ErrPrlctlNotFound)
+	return err
 }
 
 func prlctlOutErr(args ...string) (string, string, error) {
-	return runCmdOutErr(prlctlCmd, args, ErrPrlctlNotFound)
+	return runCmd(prlctlCmd, args, ErrPrlctlNotFound)
 }
 
 func prlsrvctl(args ...string) error {
-	return runCmd(prlsrvctlCmd, args, ErrPrlsrvctlNotFound)
-}
-
-func prlsrvctlOut(args ...string) (string, error) {
-	return runCmdOut(prlsrvctlCmd, args, ErrPrlsrvctlNotFound)
+	_, _, err := runCmd(prlsrvctlCmd, args, ErrPrlsrvctlNotFound)
+	return err
 }
 
 func prlsrvctlOutErr(args ...string) (string, string, error) {
-	return runCmdOutErr(prlsrvctlCmd, args, ErrPrlsrvctlNotFound)
+	return runCmd(prlsrvctlCmd, args, ErrPrlsrvctlNotFound)
 }
 
 func prldisktool(args ...string) error {
-	return runCmd(prldisktoolCmd, args, ErrPrldisktoolNotFound)
+	_, _, err := runCmd(prldisktoolCmd, args, ErrPrldisktoolNotFound)
+	return err
 }

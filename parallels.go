@@ -320,6 +320,9 @@ func (d *Driver) PreCreateCheck() error {
 	// Check Parallels Desktop version
 	ver, err := d.getParallelsVersion()
 	if err != nil {
+		if err == ErrPrlctlNotFound {
+			return fmt.Errorf("Could not detect `prlctl` binary! Make sure Parallels Desktop Pro or Business edition is installed")
+		}
 		return err
 	}
 
@@ -455,7 +458,7 @@ func (d *Driver) Start() error {
 		log.Infof("VM not in restartable state")
 	}
 
-	if err := drivers.WaitForSSH(d); err != nil {
+	if err = drivers.WaitForSSH(d); err != nil {
 		return err
 	}
 
@@ -497,7 +500,7 @@ func (d *Driver) getIPfromDHCPLease() (string, error) {
 
 	DHCPLeaseFile := "/Library/Preferences/Parallels/parallels_dhcp_leases"
 
-	stdout, err := prlctlOut("list", "-i", d.MachineName)
+	stdout, _, err := prlctlOutErr("list", "-i", d.MachineName)
 	macRe := regexp.MustCompile("net0.* mac=([0-9A-F]{12}) card=.*")
 	macMatch := macRe.FindAllStringSubmatch(stdout, 1)
 
@@ -628,12 +631,9 @@ func (d *Driver) generateDiskImage(size int) error {
 
 // Detect Parallels Desktop major version
 func (d *Driver) getParallelsVersion() (int, error) {
-	stdout, stderr, err := prlctlOutErr("--version")
+	stdout, _, err := prlctlOutErr("--version")
 	if err != nil {
-		if err == ErrPrlctlNotFound {
-			return 0, err
-		}
-		return 0, fmt.Errorf(string(stderr))
+		return 0, err
 	}
 
 	// Parse Parallels Desktop version
@@ -652,18 +652,15 @@ func (d *Driver) getParallelsVersion() (int, error) {
 
 // Detect Parallels Desktop edition
 func (d *Driver) getParallelsEdition() (string, error) {
-	stdout, stderr, err := prlsrvctlOutErr("info", "--license")
+	stdout, _, err := prlsrvctlOutErr("info", "--license")
 	if err != nil {
-		if err == ErrPrlsrvctlNotFound {
-			return "", err
-		}
-		return "", fmt.Errorf(string(stderr))
+		return "", err
 	}
 
 	// Parse Parallels Desktop version
 	res := reParallelsEdition.FindStringSubmatch(string(stdout))
 	if res == nil {
-		return "", fmt.Errorf("Parallels Desktop Edition could not be fetched!")
+		return "", fmt.Errorf("Parallels Desktop edition could not be fetched!")
 	}
 
 	return res[1], nil
