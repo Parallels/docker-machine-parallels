@@ -120,7 +120,8 @@ func (d *Driver) Create() error {
 		"--device-set", "cdrom0",
 		"--iface", "sata",
 		"--position", "0",
-		"--image", absISOPath); err != nil {
+		"--image", absISOPath,
+		"--connect"); err != nil {
 		return err
 	}
 
