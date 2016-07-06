@@ -5,31 +5,19 @@ import (
 	"errors"
 	"os"
 	"os/exec"
-	"regexp"
 	"strings"
 
 	"github.com/docker/machine/libmachine/log"
 )
 
-// TODO check these
 var (
-	reVMNameUUID       = regexp.MustCompile(`"(.+)" {([0-9a-f-]+)}`)
-	reVMInfoLine       = regexp.MustCompile(`(?:"(.+)"|(.+))=(?:"(.*)"|(.*))`)
-	reColonLine        = regexp.MustCompile(`(.+):\s+(.*)`)
-	reMachineNotFound  = regexp.MustCompile(`Failed to get VM config: The virtual machine could not be found..*`)
-	reMajorVersion     = regexp.MustCompile(`prlctl version (\d+)\.\d+\.\d+.*`)
-	reParallelsEdition = regexp.MustCompile(`edition="(.+)"`)
-)
+	prlctlCmd      = detectCmdInPath("prlctl")
+	prlsrvctlCmd   = detectCmdInPath("prlsrvctl")
+	prldisktoolCmd = detectCmdInPath("prl_disk_tool")
 
-var (
-	ErrMachineExist        = errors.New("machine already exists")
-	ErrMachineNotExist     = errors.New("machine does not exist")
-	ErrPrlctlNotFound      = errors.New("prlctl not found")
-	ErrPrlsrvctlNotFound   = errors.New("prlsrvctl not found")
-	ErrPrldisktoolNotFound = errors.New("prl_disk_tool not found")
-	prlctlCmd              = "prlctl"
-	prlsrvctlCmd           = "prlsrvctl"
-	prldisktoolCmd         = "prl_disk_tool"
+	errPrlctlNotFound      = errors.New("Could not detect `prlctl` binary! Make sure Parallels Desktop Pro or Business edition is installed")
+	errPrlsrvctlNotFound   = errors.New("Could not detect `prlsrvctl` binary! Make sure Parallels Desktop Pro or Business edition is installed")
+	errPrldisktoolNotFound = errors.New("Could not detect `prl_disk_tool` binary! Make sure Parallels Desktop Pro or Business edition is installed")
 )
 
 func runCmd(cmdName string, args []string, notFound error) (string, string, error) {
@@ -54,24 +42,24 @@ func runCmd(cmdName string, args []string, notFound error) (string, string, erro
 }
 
 func prlctl(args ...string) error {
-	_, _, err := runCmd(prlctlCmd, args, ErrPrlctlNotFound)
+	_, _, err := runCmd(prlctlCmd, args, errPrlctlNotFound)
 	return err
 }
 
 func prlctlOutErr(args ...string) (string, string, error) {
-	return runCmd(prlctlCmd, args, ErrPrlctlNotFound)
+	return runCmd(prlctlCmd, args, errPrlctlNotFound)
 }
 
 func prlsrvctl(args ...string) error {
-	_, _, err := runCmd(prlsrvctlCmd, args, ErrPrlsrvctlNotFound)
+	_, _, err := runCmd(prlsrvctlCmd, args, errPrlsrvctlNotFound)
 	return err
 }
 
 func prlsrvctlOutErr(args ...string) (string, string, error) {
-	return runCmd(prlsrvctlCmd, args, ErrPrlsrvctlNotFound)
+	return runCmd(prlsrvctlCmd, args, errPrlsrvctlNotFound)
 }
 
 func prldisktool(args ...string) error {
-	_, _, err := runCmd(prldisktoolCmd, args, ErrPrldisktoolNotFound)
+	_, _, err := runCmd(prldisktoolCmd, args, errPrldisktoolNotFound)
 	return err
 }

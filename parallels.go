@@ -1,10 +1,12 @@
 package parallels
 
 import (
+	"errors"
 	"fmt"
 	"io/ioutil"
 	"net"
 	"os"
+	"os/exec"
 	"path/filepath"
 	"regexp"
 	"runtime"
@@ -30,6 +32,16 @@ const (
 	defaultBoot2DockerURL = ""
 	defaultNoShare        = false
 	defaultDiskSize       = 20000
+)
+
+var (
+	reMachineNotFound  = regexp.MustCompile(`Failed to get VM config: The virtual machine could not be found..*`)
+	reMajorVersion     = regexp.MustCompile(`prlctl version (\d+)\.\d+\.\d+.*`)
+	reParallelsEdition = regexp.MustCompile(`edition="(.+)"`)
+
+	errMachineExist       = errors.New("machine already exists")
+	errMachineNotExist    = errors.New("machine does not exist")
+	errSharedNotConnected = errors.New("Your Mac host is not connected to Shared network. Please, enable this option: 'Parallels Desktop' -> 'Preferences' -> 'Network' -> 'Shared' -> 'Connect Mac to this network'")
 )
 
 // Driver for Parallels Desktop
@@ -77,7 +89,7 @@ func (d *Driver) Create() error {
 
 	log.Infof("Creating Parallels Desktop VM...")
 
-	ver, err := d.getParallelsVersion()
+	ver, err := getParallelsVersion()
 	if err != nil {
 		return err
 	}
@@ -259,15 +271,6 @@ func (d *Driver) GetSSHHostname() (string, error) {
 	return d.GetIP()
 }
 
-// GetSSHUsername returns username for use with ssh
-func (d *Driver) GetSSHUsername() string {
-	if d.SSHUser == "" {
-		d.SSHUser = "docker"
-	}
-
-	return d.SSHUser
-}
-
 // GetURL returns a Docker compatible host URL for connecting to this host
 // e.g. tcp://1.2.3.4:2376
 func (d *Driver) GetURL() (string, error) {
@@ -286,7 +289,7 @@ func (d *Driver) GetState() (state.State, error) {
 	stdout, stderr, err := prlctlOutErr("list", d.MachineName, "--output", "status", "--no-header")
 	if err != nil {
 		if reMachineNotFound.FindString(stderr) != "" {
-			return state.Error, ErrMachineNotExist
+			return state.Error, errMachineNotExist
 		}
 		return state.Error, err
 	}
@@ -319,11 +322,8 @@ func (d *Driver) PreCreateCheck() error {
 	}
 
 	// Check Parallels Desktop version
-	ver, err := d.getParallelsVersion()
+	ver, err := getParallelsVersion()
 	if err != nil {
-		if err == ErrPrlctlNotFound {
-			return fmt.Errorf("Could not detect `prlctl` binary! Make sure Parallels Desktop Pro or Business edition is installed")
-		}
 		return err
 	}
 
@@ -339,7 +339,7 @@ func (d *Driver) PreCreateCheck() error {
 	}
 
 	// Check Parallels Desktop edition
-	edit, err := d.getParallelsEdition()
+	edit, err := getParallelsEdition()
 	if err != nil {
 		return err
 	}
@@ -367,7 +367,7 @@ func (d *Driver) PreCreateCheck() error {
 func (d *Driver) Remove() error {
 	s, err := d.GetState()
 	if err != nil {
-		if err == ErrMachineNotExist {
+		if err == errMachineNotExist {
 			log.Infof("machine does not exist, assuming it has been removed already")
 			return nil
 		}
@@ -442,6 +442,15 @@ func (d *Driver) SetConfigFromFlags(opts drivers.DriverOptions) error {
 
 // Start a host
 func (d *Driver) Start() error {
+	// Check whether the host is connected to Shared network
+	ok, err := isSharedConnected()
+	if err != nil {
+		return err
+	}
+	if !ok {
+		return errSharedNotConnected
+	}
+
 	s, err := d.GetState()
 	if err != nil {
 		return err
@@ -630,8 +639,19 @@ func (d *Driver) generateDiskImage(size int) error {
 	return nil
 }
 
-// Detect Parallels Desktop major version
-func (d *Driver) getParallelsVersion() (int, error) {
+func (d *Driver) publicSSHKeyPath() string {
+	return d.GetSSHKeyPath() + ".pub"
+}
+
+func detectCmdInPath(cmd string) string {
+	if path, err := exec.LookPath(cmd); err == nil {
+		return path
+	}
+	return cmd
+}
+
+// Detects Parallels Desktop major version
+func getParallelsVersion() (int, error) {
 	stdout, _, err := prlctlOutErr("--version")
 	if err != nil {
 		return 0, err
@@ -651,8 +671,8 @@ func (d *Driver) getParallelsVersion() (int, error) {
 	return majorVer, nil
 }
 
-// Detect Parallels Desktop edition
-func (d *Driver) getParallelsEdition() (string, error) {
+// Detects Parallels Desktop edition
+func getParallelsEdition() (string, error) {
 	stdout, _, err := prlsrvctlOutErr("info", "--license")
 	if err != nil {
 		return "", err
@@ -667,6 +687,13 @@ func (d *Driver) getParallelsEdition() (string, error) {
 	return res[1], nil
 }
 
-func (d *Driver) publicSSHKeyPath() string {
-	return d.GetSSHKeyPath() + ".pub"
+// Checks whether the host is connected to Shared network
+func isSharedConnected() (bool, error) {
+	stdout, _, err := prlsrvctlOutErr("net", "info", "Shared")
+	if err != nil {
+		return false, err
+	}
+
+	reSharedIsConnected := regexp.MustCompile(`Bound To:.*`)
+	return reSharedIsConnected.MatchString(stdout), nil
 }
