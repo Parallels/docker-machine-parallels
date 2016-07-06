@@ -27,6 +27,7 @@ var (
 	ErrPrlctlNotFound      = errors.New("prlctl not found")
 	ErrPrlsrvctlNotFound   = errors.New("prlsrvctl not found")
 	ErrPrldisktoolNotFound = errors.New("prl_disk_tool not found")
+	ErrSharedNotConnected  = errors.New("Your Mac host is not connected to Shared network. Please, enable this option: 'Parallels Desktop' -> 'Preferences' -> 'Network' -> 'Shared' -> 'Connect Mac to this network'")
 	prlctlCmd              = "prlctl"
 	prlsrvctlCmd           = "prlsrvctl"
 	prldisktoolCmd         = "prl_disk_tool"

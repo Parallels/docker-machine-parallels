@@ -442,6 +442,15 @@ func (d *Driver) SetConfigFromFlags(opts drivers.DriverOptions) error {
 
 // Start a host
 func (d *Driver) Start() error {
+	// Check whether the host is connected to Shared network
+	ok, err := isSharedConnected()
+	if err != nil {
+		return err
+	}
+	if !ok {
+		return ErrSharedNotConnected
+	}
+
 	s, err := d.GetState()
 	if err != nil {
 		return err
@@ -669,4 +678,15 @@ func (d *Driver) getParallelsEdition() (string, error) {
 
 func (d *Driver) publicSSHKeyPath() string {
 	return d.GetSSHKeyPath() + ".pub"
+}
+
+// Checks whether the host is connected to Shared network
+func isSharedConnected() (bool, error) {
+	stdout, _, err := prlsrvctlOutErr("net", "info", "Shared")
+	if err != nil {
+		return false, err
+	}
+
+	reSharedIsConnected := regexp.MustCompile(`Bound To:.*`)
+	return reSharedIsConnected.MatchString(stdout), nil
 }
