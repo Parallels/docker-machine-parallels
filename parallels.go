@@ -78,7 +78,7 @@ func (d *Driver) Create() error {
 
 	log.Infof("Creating Parallels Desktop VM...")
 
-	ver, err := d.getParallelsVersion()
+	ver, err := getParallelsVersion()
 	if err != nil {
 		return err
 	}
@@ -260,15 +260,6 @@ func (d *Driver) GetSSHHostname() (string, error) {
 	return d.GetIP()
 }
 
-// GetSSHUsername returns username for use with ssh
-func (d *Driver) GetSSHUsername() string {
-	if d.SSHUser == "" {
-		d.SSHUser = "docker"
-	}
-
-	return d.SSHUser
-}
-
 // GetURL returns a Docker compatible host URL for connecting to this host
 // e.g. tcp://1.2.3.4:2376
 func (d *Driver) GetURL() (string, error) {
@@ -320,7 +311,7 @@ func (d *Driver) PreCreateCheck() error {
 	}
 
 	// Check Parallels Desktop version
-	ver, err := d.getParallelsVersion()
+	ver, err := getParallelsVersion()
 	if err != nil {
 		if err == ErrPrlctlNotFound {
 			return fmt.Errorf("Could not detect `prlctl` binary! Make sure Parallels Desktop Pro or Business edition is installed")
@@ -340,7 +331,7 @@ func (d *Driver) PreCreateCheck() error {
 	}
 
 	// Check Parallels Desktop edition
-	edit, err := d.getParallelsEdition()
+	edit, err := getParallelsEdition()
 	if err != nil {
 		return err
 	}
@@ -640,8 +631,19 @@ func (d *Driver) generateDiskImage(size int) error {
 	return nil
 }
 
-// Detect Parallels Desktop major version
-func (d *Driver) getParallelsVersion() (int, error) {
+func (d *Driver) publicSSHKeyPath() string {
+	return d.GetSSHKeyPath() + ".pub"
+}
+
+func detectCmdInPath(cmd string) string {
+	if path, err := exec.LookPath(cmd); err == nil {
+		return path
+	}
+	return cmd
+}
+
+// Detects Parallels Desktop major version
+func getParallelsVersion() (int, error) {
 	stdout, _, err := prlctlOutErr("--version")
 	if err != nil {
 		return 0, err
@@ -661,8 +663,8 @@ func (d *Driver) getParallelsVersion() (int, error) {
 	return majorVer, nil
 }
 
-// Detect Parallels Desktop edition
-func (d *Driver) getParallelsEdition() (string, error) {
+// Detects Parallels Desktop edition
+func getParallelsEdition() (string, error) {
 	stdout, _, err := prlsrvctlOutErr("info", "--license")
 	if err != nil {
 		return "", err
@@ -675,17 +677,6 @@ func (d *Driver) getParallelsEdition() (string, error) {
 	}
 
 	return res[1], nil
-}
-
-func (d *Driver) publicSSHKeyPath() string {
-	return d.GetSSHKeyPath() + ".pub"
-}
-
-func detectCmdInPath(cmd string) string {
-	if path, err := exec.LookPath(cmd); err == nil {
-		return path
-	}
-	return cmd
 }
 
 // Checks whether the host is connected to Shared network
