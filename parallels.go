@@ -401,6 +401,12 @@ func (d *Driver) GetCreateFlags() []mcnflag.Flag {
 			Value:  defaultMemory,
 		},
 		mcnflag.IntFlag{
+			EnvVar: "PARALLELS_MEMORY_SIZE",
+			Name:   "parallels-memory-size",
+			Usage:  "Size of memory for host in MB",
+			Value:  defaultMemory,
+		},
+		mcnflag.IntFlag{
 			EnvVar: "PARALLELS_CPU_COUNT",
 			Name:   "parallels-cpu-count",
 			Usage:  "number of CPUs for the machine (-1 to use the number of CPUs available)",
@@ -429,7 +435,11 @@ func (d *Driver) GetCreateFlags() []mcnflag.Flag {
 // by RegisterCreateFlags
 func (d *Driver) SetConfigFromFlags(opts drivers.DriverOptions) error {
 	d.CPU = opts.Int("parallels-cpu-count")
-	d.Memory = opts.Int("parallels-memory")
+	if opts.Int("parallels-memory-size") != defaultMemory {
+		d.Memory = opts.Int("parallels-memory-size")
+	} else {
+		d.Memory = opts.Int("parallels-memory")
+	}
 	d.DiskSize = opts.Int("parallels-disk-size")
 	d.Boot2DockerURL = opts.String("parallels-boot2docker-url")
 	d.SetSwarmConfigFromFlags(opts)
