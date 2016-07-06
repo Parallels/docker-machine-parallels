@@ -28,9 +28,9 @@ var (
 	ErrPrlsrvctlNotFound   = errors.New("prlsrvctl not found")
 	ErrPrldisktoolNotFound = errors.New("prl_disk_tool not found")
 	ErrSharedNotConnected  = errors.New("Your Mac host is not connected to Shared network. Please, enable this option: 'Parallels Desktop' -> 'Preferences' -> 'Network' -> 'Shared' -> 'Connect Mac to this network'")
-	prlctlCmd              = "prlctl"
-	prlsrvctlCmd           = "prlsrvctl"
-	prldisktoolCmd         = "prl_disk_tool"
+	prlctlCmd              = detectCmdInPath("prlctl")
+	prlsrvctlCmd           = detectCmdInPath("prlsrvctl")
+	prldisktoolCmd         = detectCmdInPath("prl_disk_tool")
 )
 
 func runCmd(cmdName string, args []string, notFound error) (string, string, error) {
