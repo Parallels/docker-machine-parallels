@@ -353,6 +353,15 @@ func (d *Driver) PreCreateCheck() error {
 		return fmt.Errorf("Docker Machine can be used only with Parallels Desktop Pro or Business edition. You use: %s edition", edit)
 	}
 
+	// Check whether the host is connected to Shared network
+	ok, err := isSharedConnected()
+	if err != nil {
+		return err
+	}
+	if !ok {
+		return errSharedNotConnected
+	}
+
 	// Downloading boot2docker to cache should be done here to make sure
 	// that a download failure will not leave a machine half created.
 	b2dutils := mcnutils.NewB2dUtils(d.StorePath)
