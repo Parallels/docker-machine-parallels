@@ -5,7 +5,7 @@ import (
 	"path"
 
 	"github.com/Parallels/docker-machine-parallels"
-	"github.com/codegangsta/cli"
+	"github.com/urfave/cli"
 	"github.com/docker/machine/libmachine/drivers/plugin"
 )
 

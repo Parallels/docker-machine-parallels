@@ -8,11 +8,6 @@
 	],
 	"Deps": [
 		{
-			"ImportPath": "github.com/codegangsta/cli",
-			"Comment": "1.2.0",
-			"Rev": "565493f259bf868adb54d45d5f4c68d405117adf"
-		},
-		{
 			"ImportPath": "github.com/docker/docker/pkg/term",
 			"Comment": "v1.5.0",
 			"Rev": "a8a31eff10544860d2188dddabdee4d727545796"
@@ -71,6 +66,11 @@
 			"ImportPath": "github.com/docker/machine/version",
 			"Comment": "v0.7.0",
 			"Rev": "a650a404fc3e006fea17b12615266168db79c776"
+		},
+		{
+			"ImportPath": "github.com/urfave/cli",
+			"Comment": "v1.18.0",
+			"Rev": "1efa31f08b9333f1bd4882d61f9d668a70cd902e"
 		},
 		{
 			"ImportPath": "golang.org/x/crypto/curve25519",
