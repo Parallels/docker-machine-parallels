@@ -1,6 +1,7 @@
 package parallels
 
 import (
+	"errors"
 	"fmt"
 	"io/ioutil"
 	"net"
@@ -31,6 +32,16 @@ const (
 	defaultBoot2DockerURL = ""
 	defaultNoShare        = false
 	defaultDiskSize       = 20000
+)
+
+var (
+	reMachineNotFound  = regexp.MustCompile(`Failed to get VM config: The virtual machine could not be found..*`)
+	reMajorVersion     = regexp.MustCompile(`prlctl version (\d+)\.\d+\.\d+.*`)
+	reParallelsEdition = regexp.MustCompile(`edition="(.+)"`)
+
+	errMachineExist       = errors.New("machine already exists")
+	errMachineNotExist    = errors.New("machine does not exist")
+	errSharedNotConnected = errors.New("Your Mac host is not connected to Shared network. Please, enable this option: 'Parallels Desktop' -> 'Preferences' -> 'Network' -> 'Shared' -> 'Connect Mac to this network'")
 )
 
 // Driver for Parallels Desktop
@@ -278,7 +289,7 @@ func (d *Driver) GetState() (state.State, error) {
 	stdout, stderr, err := prlctlOutErr("list", d.MachineName, "--output", "status", "--no-header")
 	if err != nil {
 		if reMachineNotFound.FindString(stderr) != "" {
-			return state.Error, ErrMachineNotExist
+			return state.Error, errMachineNotExist
 		}
 		return state.Error, err
 	}
@@ -313,9 +324,6 @@ func (d *Driver) PreCreateCheck() error {
 	// Check Parallels Desktop version
 	ver, err := getParallelsVersion()
 	if err != nil {
-		if err == ErrPrlctlNotFound {
-			return fmt.Errorf("Could not detect `prlctl` binary! Make sure Parallels Desktop Pro or Business edition is installed")
-		}
 		return err
 	}
 
@@ -359,7 +367,7 @@ func (d *Driver) PreCreateCheck() error {
 func (d *Driver) Remove() error {
 	s, err := d.GetState()
 	if err != nil {
-		if err == ErrMachineNotExist {
+		if err == errMachineNotExist {
 			log.Infof("machine does not exist, assuming it has been removed already")
 			return nil
 		}
@@ -440,7 +448,7 @@ func (d *Driver) Start() error {
 		return err
 	}
 	if !ok {
-		return ErrSharedNotConnected
+		return errSharedNotConnected
 	}
 
 	s, err := d.GetState()
