@@ -1,5 +1,10 @@
 # Changelog
 
+## 1.2.1 (July 12, 2016)
+- Force to connect the attached ISO image
+- Check whether the host is connected to Shared network interface [GH-56]
+- Update build dependencies [GH-57]
+
 ## 1.2.0 (April 15, 2016)
 - Enable time sync feature by default [GH-47]
 - Use Golang 1.6 to build the binary, update dependencies [GH-46]
