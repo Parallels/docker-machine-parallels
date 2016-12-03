@@ -32,6 +32,8 @@ const (
 	defaultBoot2DockerURL = ""
 	defaultNoShare        = false
 	defaultDiskSize       = 20000
+	defaultSSHPort        = 22
+	defaultSSHUser        = "docker"
 )
 
 var (
@@ -55,11 +57,13 @@ type Driver struct {
 }
 
 // NewDriver creates a new Parallels Desktop driver with default settings
-func NewDriver(hostName, storePath string) *Driver {
+func NewDriver(hostName, storePath string) drivers.Driver {
 	return &Driver{
 		BaseDriver: &drivers.BaseDriver{
 			MachineName: hostName,
 			StorePath:   storePath,
+			SSHUser:     defaultSSHUser,
+			SSHPort:     defaultSSHPort,
 		},
 		CPU:            defaultCPU,
 		Memory:         defaultMemory,
@@ -442,8 +446,8 @@ func (d *Driver) SetConfigFromFlags(opts drivers.DriverOptions) error {
 	d.DiskSize = opts.Int("parallels-disk-size")
 	d.Boot2DockerURL = opts.String("parallels-boot2docker-url")
 	d.SetSwarmConfigFromFlags(opts)
-	d.SSHUser = "docker"
-	d.SSHPort = 22
+	d.SSHUser = defaultSSHUser
+	d.SSHPort = defaultSSHPort
 	d.NoShare = opts.Bool("parallels-no-share")
 
 	return nil
