@@ -1,7 +1,7 @@
 {
 	"ImportPath": "github.com/Parallels/docker-machine-parallels",
-	"GoVersion": "go1.6",
-	"GodepVersion": "v60",
+	"GoVersion": "go1.7",
+	"GodepVersion": "v75",
 	"Packages": [
 		"github.com/Parallels/docker-machine-parallels",
 		"github.com/Parallels/docker-machine-parallels/bin"
