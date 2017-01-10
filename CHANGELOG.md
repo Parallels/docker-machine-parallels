@@ -1,5 +1,8 @@
 # Changelog
 
+## 1.2.2 (January 10, 2017)
+- Use Golang 1.7 to build the binary, update dependencies
+
 ## 1.2.1 (July 12, 2016)
 - Force to connect the attached ISO image
 - Check whether the host is connected to Shared network interface [GH-56]
