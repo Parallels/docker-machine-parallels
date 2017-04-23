@@ -2,6 +2,8 @@
 
 load ${BASE_TEST_DIR}/helpers.bash
 
+use_disposable_machine
+
 # Default memsize is 1024MB and disksize is 20000MB
 # These values are defined in parallels.go
 export DEFAULT_MEMSIZE=1024

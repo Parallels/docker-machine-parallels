@@ -2,9 +2,7 @@
 
 load ${BASE_TEST_DIR}/helpers.bash
 
-@test "$DRIVER: create" {
-  run machine create -d $DRIVER $NAME
-}
+use_shared_machine
 
 @test "$DRIVER: verify that server cert checksum matches local checksum" {
   # Have to create this directory and file or else the OpenSSL checksum will barf.
