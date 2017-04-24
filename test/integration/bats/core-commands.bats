@@ -2,17 +2,13 @@
 
 load ${BASE_TEST_DIR}/helpers.bash
 
+use_shared_machine
+
 @test "$DRIVER: machine should not exist" {
-  run machine inspect $NAME
+  run machine inspect UNKNOWN
   echo ${output}
   [ "$status" -eq 1 ]
-  [[ ${lines[0]} =~ "Host does not exist: \"$NAME\"" ]]
-}
-
-@test "$DRIVER: create" {
-  run machine create -d $DRIVER $NAME
-  echo ${output}
-  [ "$status" -eq 0  ]
+  [[ ${lines[0]} =~ "Host does not exist: \"UNKNOWN\"" ]]
 }
 
 @test "$DRIVER: appears with ls" {
@@ -61,6 +57,12 @@ load ${BASE_TEST_DIR}/helpers.bash
   [[ ${lines[0]} =~ "total"  ]]
 }
 
+@test "$DRIVER: version" {
+  run machine version $NAME
+  echo ${output}
+  [ "$status" -eq 0  ]
+}
+
 @test "$DRIVER: docker commands with the socket should work" {
   run machine ssh $NAME -- sudo docker version
   echo ${output}
@@ -90,20 +92,21 @@ load ${BASE_TEST_DIR}/helpers.bash
   run machine url $NAME
   echo ${output}
   [ "$status" -eq 1 ]
-  [[ ${output} == *"not running"* ]]
+  [[ ${output} == *"Host is not running"* ]]
 }
 
 @test "$DRIVER: env should show an error when machine is stopped" {
   run machine env $NAME
   echo ${output}
   [ "$status" -eq 1 ]
-  [[ ${output} == *"not running"* ]]
+  [[ ${output} == *"Host is not running"* ]]
 }
 
-@test "$DRIVER: machine should not allow upgrade when stopped" {
-  run machine upgrade $NAME
+@test "$DRIVER: version should show an error when machine is stopped" {
+  run machine version $NAME
   echo ${output}
-  [[ "$status" -eq 1 ]]
+  [ "$status" -eq 1 ]
+  [[ ${output} == *"Host is not running"* ]]
 }
 
 @test "$DRIVER: start" {
@@ -113,7 +116,7 @@ load ${BASE_TEST_DIR}/helpers.bash
 }
 
 @test "$DRIVER: machine should show running after start" {
-  run machine ls
+  run machine ls --timeout 20
   echo ${output}
   [ "$status" -eq 0  ]
   [[ ${lines[1]} == *"Running"*  ]]
@@ -139,7 +142,7 @@ load ${BASE_TEST_DIR}/helpers.bash
 }
 
 @test "$DRIVER: machine should show running after restart" {
-  run machine ls
+  run machine ls --timeout 20
   echo ${output}
   [ "$status" -eq 0  ]
   [[ ${lines[1]} == *"Running"*  ]]

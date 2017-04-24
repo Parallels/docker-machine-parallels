@@ -2,6 +2,8 @@
 
 load ${BASE_TEST_DIR}/helpers.bash
 
+use_disposable_machine
+
 export OLD_ISO_URL="https://github.com/Parallels/boot2docker/releases/download/v1.7.0-prl-tools/boot2docker.iso"
 
 @test "$DRIVER: create for upgrade" {
