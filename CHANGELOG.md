@@ -1,5 +1,8 @@
 # Changelog
 
+## 1.2.3 (April 25, 2017)
+- Update `libmachine` libs to v0.10.0
+
 ## 1.2.2 (January 10, 2017)
 - Use Golang 1.7 to build the binary, update dependencies
 
