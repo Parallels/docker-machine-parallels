@@ -39,12 +39,15 @@ const (
 
 var (
 	reMachineNotFound  = regexp.MustCompile(`Failed to get VM config: The virtual machine could not be found..*`)
-	reMajorVersion     = regexp.MustCompile(`prlctl version (\d+)\.\d+\.\d+.*`)
+	reParallelsVersion = regexp.MustCompile(`.* (\d+\.\d+\.\d+).*`)
 	reParallelsEdition = regexp.MustCompile(`edition="(.+)"`)
 
 	errMachineExist       = errors.New("machine already exists")
 	errMachineNotExist    = errors.New("machine does not exist")
 	errSharedNotConnected = errors.New("Your Mac host is not connected to Shared network. Please, enable this option: 'Parallels Desktop' -> 'Preferences' -> 'Network' -> 'Shared' -> 'Connect Mac to this network'")
+
+	v10, _ = version.NewVersion("10.0.0")
+	v11, _ = version.NewVersion("11.0.0")
 )
 
 // Driver for Parallels Desktop
@@ -100,7 +103,7 @@ func (d *Driver) Create() error {
 	}
 
 	distribution := "boot2docker"
-	if ver < 11 {
+	if ver.LessThan(v11) {
 		distribution = "linux-2.6"
 	}
 
@@ -157,7 +160,8 @@ func (d *Driver) Create() error {
 		return err
 	}
 
-	if ver >= 11 {
+	// For Parallels Desktop >= 11.0.0
+	if ver.Compare(v11) >= 0  {
 		// Enable headless mode
 		if err = prlctl("set", d.MachineName,
 			"--startup-view", "headless"); err != nil {
@@ -332,12 +336,12 @@ func (d *Driver) PreCreateCheck() error {
 		return err
 	}
 
-	if ver < 10 {
-		return fmt.Errorf("Driver \"parallels\" supports only Parallels Desktop 10 and higher. You use: Parallels Desktop %d.", ver)
+	if ver.LessThan(v10) {
+		return fmt.Errorf("Driver \"parallels\" supports only Parallels Desktop 10 and higher. You use: Parallels Desktop %s.", ver)
 	}
 
-	if ver < 11 {
-		log.Debugf("Found Parallels Desktop version: %d", ver)
+	if ver.LessThan(v11) {
+		log.Debugf("Found Parallels Desktop version: %s", ver)
 		log.Infof("Driver \"parallels\" integration with Parallels Desktop 10 is maintained by open source community.")
 		log.Infof("For Parallels supported configuration you should use it with Parallels Desktop 11 or later (Pro or Business edition).")
 		return nil
@@ -665,24 +669,24 @@ func detectCmdInPath(cmd string) string {
 }
 
 // Detects Parallels Desktop major version
-func getParallelsVersion() (int, error) {
+func getParallelsVersion() (*version.Version, error) {
 	stdout, _, err := prlctlOutErr("--version")
 	if err != nil {
-		return 0, err
+		return nil, err
 	}
 
 	// Parse Parallels Desktop version
-	res := reMajorVersion.FindStringSubmatch(string(stdout))
-	if res == nil {
-		return 0, fmt.Errorf("Parallels Desktop version could not be fetched: %s", stdout)
+	verRaw := reParallelsVersion.FindStringSubmatch(string(stdout))
+	if verRaw == nil {
+		return nil, fmt.Errorf("Parallels Desktop version could not be fetched: %s", stdout)
 	}
 
-	majorVer, err := strconv.Atoi(res[1])
+	ver, err := version.NewVersion(verRaw[1])
 	if err != nil {
-		return 0, err
+		return nil, err
 	}
 
-	return majorVer, nil
+	return ver, nil
 }
 
 // Detects Parallels Desktop edition
