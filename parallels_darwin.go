@@ -145,6 +145,14 @@ func (d *Driver) Create() error {
 		return err
 	}
 
+	initialDiskSize := minDiskSize
+
+	// Fix for [GH-67]. Create a bigger disk on Parallels Desktop 13.0.*
+	constraints, _ := version.NewConstraint(">= 13.0.0, < 13.1.0")
+	if constraints.Check(ver) {
+		initialDiskSize = 1891
+	}
+
 	// Create a small plain disk. It will be converted and expanded later
 	if err = prlctl("set", d.MachineName,
 		"--device-add", "hdd",
@@ -152,7 +160,7 @@ func (d *Driver) Create() error {
 		"--position", "1",
 		"--image", d.diskPath(),
 		"--type", "plain",
-		"--size", fmt.Sprintf("%d", minDiskSize)); err != nil {
+		"--size", fmt.Sprintf("%d", initialDiskSize)); err != nil {
 		return err
 	}
 
@@ -643,7 +651,7 @@ func (d *Driver) generateDiskImage(size int) error {
 	hds.Close()
 
 	// Convert image to expanding type and resize it
-	if err := prldisktool("convert", "--expanding",
+	if err := prldisktool("convert", "--expanding", "--merge",
 		"--hdd", d.diskPath()); err != nil {
 		return err
 	}
