@@ -68,6 +68,10 @@
 			"Rev": "76ed2a62eabf714bf0a842cda780b034eb0b21c0"
 		},
 		{
+			"ImportPath": "github.com/hashicorp/go-version",
+			"Rev": "03c5bf6be031b6dd45afec16b1cf94fc8938bc77"
+		},
+		{
 			"ImportPath": "github.com/urfave/cli",
 			"Comment": "v1.18.0",
 			"Rev": "1efa31f08b9333f1bd4882d61f9d668a70cd902e"

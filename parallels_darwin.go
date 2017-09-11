@@ -20,6 +20,7 @@ import (
 	"github.com/docker/machine/libmachine/mcnutils"
 	"github.com/docker/machine/libmachine/ssh"
 	"github.com/docker/machine/libmachine/state"
+	"github.com/hashicorp/go-version"
 )
 
 const (
