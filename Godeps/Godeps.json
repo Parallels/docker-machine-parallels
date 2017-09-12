@@ -32,58 +32,58 @@
 		},
 		{
 			"ImportPath": "github.com/docker/machine/libmachine/drivers",
-			"Comment": "v0.10.0",
-			"Rev": "76ed2a62eabf714bf0a842cda780b034eb0b21c0"
+			"Comment": "v0.12.2",
+			"Rev": "937160559e02cc430fe176991beb9a6ffbfe3de0"
 		},
 		{
 			"ImportPath": "github.com/docker/machine/libmachine/drivers/plugin",
-			"Comment": "v0.10.0",
-			"Rev": "76ed2a62eabf714bf0a842cda780b034eb0b21c0"
+			"Comment": "v0.12.2",
+			"Rev": "937160559e02cc430fe176991beb9a6ffbfe3de0"
 		},
 		{
 			"ImportPath": "github.com/docker/machine/libmachine/drivers/plugin/localbinary",
-			"Comment": "v0.10.0",
-			"Rev": "76ed2a62eabf714bf0a842cda780b034eb0b21c0"
+			"Comment": "v0.12.2",
+			"Rev": "937160559e02cc430fe176991beb9a6ffbfe3de0"
 		},
 		{
 			"ImportPath": "github.com/docker/machine/libmachine/drivers/rpc",
-			"Comment": "v0.10.0",
-			"Rev": "76ed2a62eabf714bf0a842cda780b034eb0b21c0"
+			"Comment": "v0.12.2",
+			"Rev": "937160559e02cc430fe176991beb9a6ffbfe3de0"
 		},
 		{
 			"ImportPath": "github.com/docker/machine/libmachine/log",
-			"Comment": "v0.10.0",
-			"Rev": "76ed2a62eabf714bf0a842cda780b034eb0b21c0"
+			"Comment": "v0.12.2",
+			"Rev": "937160559e02cc430fe176991beb9a6ffbfe3de0"
 		},
 		{
 			"ImportPath": "github.com/docker/machine/libmachine/mcnflag",
-			"Comment": "v0.10.0",
-			"Rev": "76ed2a62eabf714bf0a842cda780b034eb0b21c0"
+			"Comment": "v0.12.2",
+			"Rev": "937160559e02cc430fe176991beb9a6ffbfe3de0"
 		},
 		{
 			"ImportPath": "github.com/docker/machine/libmachine/mcnutils",
-			"Comment": "v0.10.0",
-			"Rev": "76ed2a62eabf714bf0a842cda780b034eb0b21c0"
+			"Comment": "v0.12.2",
+			"Rev": "937160559e02cc430fe176991beb9a6ffbfe3de0"
 		},
 		{
 			"ImportPath": "github.com/docker/machine/libmachine/ssh",
-			"Comment": "v0.10.0",
-			"Rev": "76ed2a62eabf714bf0a842cda780b034eb0b21c0"
+			"Comment": "v0.12.2",
+			"Rev": "937160559e02cc430fe176991beb9a6ffbfe3de0"
 		},
 		{
 			"ImportPath": "github.com/docker/machine/libmachine/state",
-			"Comment": "v0.10.0",
-			"Rev": "76ed2a62eabf714bf0a842cda780b034eb0b21c0"
+			"Comment": "v0.12.2",
+			"Rev": "937160559e02cc430fe176991beb9a6ffbfe3de0"
 		},
 		{
 			"ImportPath": "github.com/docker/machine/libmachine/version",
-			"Comment": "v0.10.0",
-			"Rev": "76ed2a62eabf714bf0a842cda780b034eb0b21c0"
+			"Comment": "v0.12.2",
+			"Rev": "937160559e02cc430fe176991beb9a6ffbfe3de0"
 		},
 		{
 			"ImportPath": "github.com/docker/machine/version",
-			"Comment": "v0.10.0",
-			"Rev": "76ed2a62eabf714bf0a842cda780b034eb0b21c0"
+			"Comment": "v0.12.2",
+			"Rev": "937160559e02cc430fe176991beb9a6ffbfe3de0"
 		},
 		{
 			"ImportPath": "github.com/hashicorp/go-version",
