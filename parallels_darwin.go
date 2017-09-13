@@ -444,7 +444,7 @@ func (d *Driver) GetCreateFlags() []mcnflag.Flag {
 		mcnflag.IntFlag{
 			EnvVar: "PARALLELS_VIDEO_SIZE",
 			Name:   "parallels-video-size",
-			Usage:  "Size of video for host in MB",
+			Usage:  "Size of video memory for host in MB",
 			Value:  defaultVideoSize,
 		},
 		mcnflag.IntFlag{

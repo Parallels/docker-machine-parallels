@@ -2,7 +2,7 @@
 
 ## 1.3.0 (September 25, 2017)
 - Fix compatibility with Parallels Desktop 13.0.* [GH-68]
-- Add `--videosize` argument to manage a video memory size [GH-61]
+- Add `--parallels-video-size` argument to manage a video memory size [GH-61]
 - Use Golang 1.9 to build the binary [GH-69]
 - Update `libmachine` libs to v0.12.2 [GH-69]
 - Update `docker` libs to v17.03.2-ce [GH-69]

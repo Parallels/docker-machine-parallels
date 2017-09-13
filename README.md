@@ -45,7 +45,8 @@ Available options:
  - `--parallels-disk-size`: Size of disk for the host VM (in MB).
  - `--parallels-memory`: Size of memory for the host VM (in MB).
  - `--parallels-cpu-count`: Number of CPUs to use to create the VM (-1 to use the number of CPUs available).
- - `--parallels-no-share`: Disable the sharing of `/Users` directory
+ - `--parallels-video-size`: Size of video memory for host (in MB).
+ - `--parallels-no-share`: Disable the sharing of `/Users` directory.
 
 The `--parallels-boot2docker-url` flag takes a few different forms. By
 default, if no value is specified for this flag, Machine will check locally for
@@ -67,6 +68,7 @@ Environment variables and default values:
 | `--parallels-cpu-count`       | `PARALLELS_CPU_COUNT`       | `1`                      |
 | `--parallels-disk-size`       | `PARALLELS_DISK_SIZE`       | `20000`                  |
 | `--parallels-memory`          | `PARALLELS_MEMORY_SIZE`     | `1024`                   |
+| `--parallels-video-size`      | `PARALLELS_VIDEO_SIZE`      | `64`                     |
 | `--parallels-no-share`        | -                           | `false`                  |
 
 ## Development
