@@ -30,6 +30,7 @@ const (
 	minDiskSize           = 32
 	defaultCPU            = 1
 	defaultMemory         = 1024
+	defaultVideoSize      = 64
 	defaultBoot2DockerURL = ""
 	defaultNoShare        = false
 	defaultDiskSize       = 20000
@@ -55,6 +56,7 @@ type Driver struct {
 	*drivers.BaseDriver
 	CPU            int
 	Memory         int
+	VideoSize      int
 	DiskSize       int
 	Boot2DockerURL string
 	NoShare        bool
@@ -71,6 +73,7 @@ func NewDriver(hostName, storePath string) drivers.Driver {
 		},
 		CPU:            defaultCPU,
 		Memory:         defaultMemory,
+		VideoSize:      defaultVideoSize,
 		DiskSize:       defaultDiskSize,
 		Boot2DockerURL: defaultBoot2DockerURL,
 		NoShare:        defaultNoShare,
@@ -123,10 +126,16 @@ func (d *Driver) Create() error {
 		cpus = 32
 	}
 
+	videoSize := d.VideoSize
+	if videoSize < 2 {
+		videoSize = defaultVideoSize
+	}
+
 	if err = prlctl("set", d.MachineName,
 		"--select-boot-device", "off",
 		"--cpus", fmt.Sprintf("%d", cpus),
 		"--memsize", fmt.Sprintf("%d", d.Memory),
+		"--videosize", fmt.Sprintf("%d", videoSize),
 		"--cpu-hotplug", "off",
 		"--on-window-close", "keep-running",
 		"--longer-battery-life", "on",
@@ -433,6 +442,12 @@ func (d *Driver) GetCreateFlags() []mcnflag.Flag {
 			Value:  defaultCPU,
 		},
 		mcnflag.IntFlag{
+			EnvVar: "PARALLELS_VIDEO_SIZE",
+			Name:   "parallels-video-size",
+			Usage:  "Size of video for host in MB",
+			Value:  defaultVideoSize,
+		},
+		mcnflag.IntFlag{
 			EnvVar: "PARALLELS_DISK_SIZE",
 			Name:   "parallels-disk-size",
 			Usage:  "Size of disk for host in MB",
@@ -456,6 +471,7 @@ func (d *Driver) GetCreateFlags() []mcnflag.Flag {
 func (d *Driver) SetConfigFromFlags(opts drivers.DriverOptions) error {
 	d.CPU = opts.Int("parallels-cpu-count")
 	d.Memory = opts.Int("parallels-memory")
+	d.VideoSize = opts.Int("parallels-video-size")
 	d.DiskSize = opts.Int("parallels-disk-size")
 	d.Boot2DockerURL = opts.String("parallels-boot2docker-url")
 	d.SetSwarmConfigFromFlags(opts)
