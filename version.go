@@ -6,7 +6,7 @@ import "fmt"
 var GitCommit string
 
 // Version number that is being run at the moment.
-const Version = "1.2.3"
+const Version = "1.3.0"
 
 // FullVersion formats the version to be printed.
 func FullVersion() string {
