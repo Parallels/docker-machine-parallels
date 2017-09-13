@@ -80,7 +80,7 @@ Run these commands to build the plugin binary:
 
 ```bash
 $ go get -d github.com/Parallels/docker-machine-parallels
-$ cd $GOPATH/github.com/Parallels/docker-machine-parallels
+$ cd $GOPATH/src/github.com/Parallels/docker-machine-parallels
 $ make build
 ```
 
@@ -89,7 +89,7 @@ be created. If you want to copy it to the `${GOPATH}/bin/`, run `make install`.
 
 ### Acceptance Tests
 
-We use [BATS](https://github.com/sstephenson/bats) for acceptance testing, so,
+We use [Bats](https://github.com/sstephenson/bats) for acceptance testing, so,
 [install it](https://github.com/sstephenson/bats#installing-bats-from-source) first.
 
 You also need to build the plugin binary by calling `make build`.
