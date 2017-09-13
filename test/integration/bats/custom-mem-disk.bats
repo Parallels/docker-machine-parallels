@@ -6,10 +6,8 @@ use_disposable_machine
 
 # Default memsize is 1024MB and disksize is 20000MB
 # These values are defined in parallels.go
-export DEFAULT_MEMSIZE=1024
-export DEFAULT_DISKSIZE=20000
 export CUSTOM_MEMSIZE=1536
-export CUSTOM_DISKSIZE=10000
+export CUSTOM_DISKSIZE=10017
 export CUSTOM_CPUCOUNT=1
 
 function findDiskSize() {
