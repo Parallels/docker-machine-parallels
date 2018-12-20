@@ -69,7 +69,7 @@ use_shared_machine
 }
 
 @test "$DRIVER: shared folder /Users is mounted by default" {
-  run machine ssh $NAME -- "mount | grep prl_fs | awk -F ' on | type ' '{ print \$2 }'"
+  run machine ssh $NAME -- "mount -t prl_fs | awk -F ' on | type ' '{ print \$2 }'"
   echo ${output}
   [ "$status" -eq 0  ]
   [[ ${output} == *"/Users"* ]]
