@@ -678,7 +678,7 @@ func (d *Driver) mountShareFolder(shareName string, mountPoint string) error {
 	}
 
 	// Mount the shared folder
-	log.Infof("Mounting shared folder %q ...", mountPoint, mountPoint)
+	log.Infof("Mounting shared folder %q ...", mountPoint)
 	mountCmd := fmt.Sprintf("sudo mkdir -p %q && sudo mount -t prl_fs %q %q", mountPoint, shareName, mountPoint)
 	if _, err := drivers.RunSSHCommandFromDriver(d, mountCmd); err != nil {
 		return fmt.Errorf("Error mounting shared folder: %s", err)
