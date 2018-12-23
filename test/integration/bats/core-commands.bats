@@ -8,7 +8,7 @@ use_shared_machine
   run machine inspect UNKNOWN
   echo ${output}
   [ "$status" -eq 1 ]
-  [[ ${lines[0]} =~ "Host does not exist: \"UNKNOWN\"" ]]
+  [[ ${lines[0]} =~ "Docker machine \"UNKNOWN\" does not exist" ]]
 }
 
 @test "$DRIVER: appears with ls" {
@@ -29,7 +29,7 @@ use_shared_machine
   run machine create -d $DRIVER $NAME
   echo ${output}
   [ "$status" -eq 1  ]
-  [[ ${lines[0]} == "Host already exists: \"$NAME\"" ]]
+  [[ ${lines[0]} == "Docker machine \"$NAME\" already exists" ]]
 }
 
 @test "$DRIVER: run busybox container" {
@@ -68,8 +68,8 @@ use_shared_machine
   echo ${output}
 }
 
-@test "$DRIVER: shared folder is mounted" {
-  run machine ssh $NAME -- "mount | grep prl_fs | awk '{ print $3 }'"
+@test "$DRIVER: shared folder /Users is mounted by default" {
+  run machine ssh $NAME -- "mount -t prl_fs | awk -F ' on | type ' '{ print \$2 }'"
   echo ${output}
   [ "$status" -eq 0  ]
   [[ ${output} == *"/Users"* ]]

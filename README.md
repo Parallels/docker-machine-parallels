@@ -46,7 +46,8 @@ Available options:
  - `--parallels-memory`: Size of memory for the host VM (in MB).
  - `--parallels-cpu-count`: Number of CPUs to use to create the VM (-1 to use the number of CPUs available).
  - `--parallels-video-size`: Size of video memory for host (in MB).
- - `--parallels-no-share`: Disable the sharing of `/Users` directory.
+ - `--parallels-share-folder`: Path to the directory which should be shared with the host VM. Could be specified multiple times, once per each directory.
+ - `--parallels-no-share`: Disable the sharing of any directory.
  - `--parallels-nested-virutalization`: Enable nested virtualization.
 
 The `--parallels-boot2docker-url` flag takes a few different forms. By
@@ -70,6 +71,7 @@ Environment variables and default values:
 | `--parallels-disk-size`             | `PARALLELS_DISK_SIZE`       | `20000`                  |
 | `--parallels-memory`                | `PARALLELS_MEMORY_SIZE`     | `1024`                   |
 | `--parallels-video-size`            | `PARALLELS_VIDEO_SIZE`      | `64`                     |
+| `--parallels-share-folder`          | -                           | `/Users`                 |
 | `--parallels-no-share`              | -                           | `false`                  |
 | `--parallels-nested-virtualization` | -                           | `false`                  |
 

@@ -25,13 +25,13 @@ import (
 
 const (
 	isoFilename                 = "boot2docker.iso"
-	shareFolderName             = "Users"
-	shareFolderPath             = "/Users"
+	shareFolderNamePrefix       = "docker_machine_share_"
 	minDiskSize                 = 32
 	defaultCPU                  = 1
 	defaultMemory               = 1024
 	defaultVideoSize            = 64
 	defaultBoot2DockerURL       = ""
+	defaultShareFolder          = "/Users"
 	defaultNoShare              = false
 	defaultDiskSize             = 20000
 	defaultSSHPort              = 22
@@ -43,6 +43,7 @@ var (
 	reMachineNotFound  = regexp.MustCompile(`Failed to get VM config: The virtual machine could not be found..*`)
 	reParallelsVersion = regexp.MustCompile(`.* (\d+\.\d+\.\d+).*`)
 	reParallelsEdition = regexp.MustCompile(`edition="(.+)"`)
+	reSharedFolder     = regexp.MustCompile(`\s*(.+) \(\+\) path='(.+)' mode=.+`)
 
 	errMachineExist       = errors.New("machine already exists")
 	errMachineNotExist    = errors.New("machine does not exist")
@@ -61,6 +62,7 @@ type Driver struct {
 	DiskSize             int
 	Boot2DockerURL       string
 	NoShare              bool
+	ShareFolders         []string
 	NestedVirtualization bool
 }
 
@@ -226,10 +228,25 @@ func (d *Driver) Create() error {
 	}
 
 	if !d.NoShare {
-		if err = prlctl("set", d.MachineName,
-			"--shf-host-add", shareFolderName,
-			"--path", shareFolderPath); err != nil {
-			return err
+		for i, f := range d.ShareFolders {
+			// Ensure the path is absolute and is available
+			fAbs, err := filepath.Abs(f)
+			if err != nil {
+				return err
+			}
+			if _, err := os.Stat(fAbs); err != nil {
+				if os.IsNotExist(err) {
+					log.Infof("Host path '%s' does not exist. Skipping sharing it with the machine...", fAbs)
+					continue
+				}
+				return err
+			}
+
+			if err = prlctl("set", d.MachineName,
+				"--shf-host-add", fmt.Sprintf("%s%d", shareFolderNamePrefix, i),
+				"--path", fAbs); err != nil {
+				return err
+			}
 		}
 	}
 
@@ -471,7 +488,12 @@ func (d *Driver) GetCreateFlags() []mcnflag.Flag {
 		},
 		mcnflag.BoolFlag{
 			Name:  "parallels-no-share",
-			Usage: "Disable the mount of your home directory",
+			Usage: "Disable the mount of shared folder",
+		},
+		mcnflag.StringSliceFlag{
+			Name:  "parallels-share-folder",
+			Usage: "Path to the directory which should be shared with the machine. Default: /Users",
+			Value: []string{defaultShareFolder},
 		},
 		mcnflag.BoolFlag{
 			Name:  "parallels-nested-virtualization",
@@ -492,6 +514,7 @@ func (d *Driver) SetConfigFromFlags(opts drivers.DriverOptions) error {
 	d.SSHUser = defaultSSHUser
 	d.SSHPort = defaultSSHPort
 	d.NoShare = opts.Bool("parallels-no-share")
+	d.ShareFolders = opts.StringSlice("parallels-share-folder")
 	d.NestedVirtualization = opts.Bool("parallels-nested-virtualization")
 
 	return nil
@@ -535,9 +558,16 @@ func (d *Driver) Start() error {
 	}
 
 	// Mount Share Folder
+	shareFoldersMap, err := d.getShareFolders()
+	if err != nil {
+		return err
+	}
+
 	if !d.NoShare {
-		if err := d.mountShareFolder(shareFolderName, shareFolderPath); err != nil {
-			return err
+		for shareName, sharePath := range shareFoldersMap {
+			if err := d.mountShareFolder(shareName, sharePath); err != nil {
+				return err
+			}
 		}
 	}
 
@@ -612,25 +642,44 @@ func (d *Driver) diskPath() string {
 	return absDiskPath
 }
 
+func (d *Driver) getShareFolders() (map[string]string, error) {
+	stdout, _, err := prlctlOutErr("list", "--info", d.MachineName)
+	if err != nil {
+		return nil, err
+	}
+
+	// Parse Shared Folder name (ID) and path
+	res := make(map[string]string)
+	for _, match := range reSharedFolder.FindAllStringSubmatch(string(stdout), -1) {
+		sName := match[1]
+		sPath := match[2]
+		log.Debugf("Found the configured shared folder. Name: %q, Path: %q\n", sName, sPath)
+		res[sName] = sPath
+	}
+	return res, nil
+}
+
+// Mounts shared folder to the specified guest path. It is assumed that host and guest paths are the same
 func (d *Driver) mountShareFolder(shareName string, mountPoint string) error {
 	// Check the host path is available
 	if _, err := os.Stat(mountPoint); err != nil {
 		if os.IsNotExist(err) {
-			log.Infof("Host path '%s' does not exist. Skipping mount to VM...", mountPoint)
+			log.Infof("Host path %q does not exist. Skipping mount to VM...", mountPoint)
 			return nil
 		}
 		return err
 	}
 
-	// Ensure that share is available on the guest side
-	checkCmd := "sudo modprobe prl_fs && grep -w " + shareName + " /proc/fs/prl_fs/sf_list"
+	// Ensure that the share is available on the guest side
+	checkCmd := fmt.Sprintf("sudo modprobe prl_fs && grep -w %q /proc/fs/prl_fs/sf_list", shareName)
 	if _, err := drivers.RunSSHCommandFromDriver(d, checkCmd); err != nil {
-		log.Infof("Shared folder '%s' is unavailable. Skipping mount to VM...", shareName)
+		log.Infof("Shared folder %q is unavailable. Skipping mount to VM...", shareName)
 		return nil
 	}
 
-	// Mount shared folder
-	mountCmd := "sudo mkdir -p " + mountPoint + " && sudo mount -t prl_fs " + shareName + " " + mountPoint
+	// Mount the shared folder
+	log.Infof("Mounting shared folder %q ...", mountPoint)
+	mountCmd := fmt.Sprintf("sudo mkdir -p %q && sudo mount -t prl_fs %q %q", mountPoint, shareName, mountPoint)
 	if _, err := drivers.RunSSHCommandFromDriver(d, mountCmd); err != nil {
 		return fmt.Errorf("Error mounting shared folder: %s", err)
 	}
