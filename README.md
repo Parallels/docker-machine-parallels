@@ -77,7 +77,7 @@ Environment variables and default values:
 
 ### Build from Source
 If you wish to work on Parallels Driver for Docker machine, you'll first need
-[Go](http://www.golang.org) installed (version 1.7+ is required).
+[Go](http://www.golang.org) installed (version 1.10+ is required).
 Make sure Go is properly installed, including setting up a [GOPATH](http://golang.org/doc/code.html#GOPATH).
 
 Run these commands to build the plugin binary:
@@ -90,6 +90,12 @@ $ make build
 
 After the build is complete, `bin/docker-machine-driver-parallels` binary will
 be created. If you want to copy it to the `${GOPATH}/bin/`, run `make install`.
+
+### Managing Dependencies
+
+When you make a fresh copy of the repo, all the dependencies are in `vendor/` directory for the build to work.
+This project uses [golang/dep](https://golang.github.io/dep/) as dependency management tool.
+Please refer to [`dep` documentation](https://golang.github.io/dep/docs/introduction.html) for further details.
 
 ### Acceptance Tests
 
