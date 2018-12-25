@@ -76,24 +76,32 @@
   version = "v1.20.0"
 
 [[projects]]
-  digest = "1:c520e4d4fc9976e4da44ee0a3bdd5a45e8a206a72c1ccd2089f3d184f5eb942a"
+  branch = "master"
+  digest = "1:53a1494ea11fd60e114b6b6d82af3f945af61ba98ffbd6c9cfe052acfc526aa0"
   name = "golang.org/x/crypto"
   packages = [
     "curve25519",
     "ed25519",
     "ed25519/internal/edwards25519",
+    "internal/chacha20",
+    "internal/subtle",
+    "poly1305",
     "ssh",
     "ssh/terminal",
   ]
   pruneopts = "UT"
-  revision = "51714a8c4ac1764f07ab4127d7f739351ced4759"
+  revision = "505ab145d0a99da450461ae2c1a9f6cd10d1f447"
 
 [[projects]]
-  digest = "1:7abd0afa8bb8a8ada66e83075c1aa790a45d09955fe175cf1397c889b5cbe10e"
+  branch = "master"
+  digest = "1:3d5e79e10549fd9119cbefd614b6d351ef5bd0be2f2b103a4199788e784cbc68"
   name = "golang.org/x/sys"
-  packages = ["unix"]
+  packages = [
+    "unix",
+    "windows",
+  ]
   pruneopts = "UT"
-  revision = "d9157a9621b69ad1d8d77a1933590c416593f24f"
+  revision = "b4a75ba826a64a70990f11a225237acd6ef35c9f"
 
 [solve-meta]
   analyzer-name = "dep"
