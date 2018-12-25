@@ -52,19 +52,20 @@
   version = "v0.12.2"
 
 [[projects]]
-  digest = "1:826df03282c5a336f1d23a07ce0ec0a26c7230e1a5d5a79a8ea4b68c0c8462b3"
+  digest = "1:77395dd3847dac9c45118c668f5dab85aedf0163dc3b38aea6578c5cf0d502f9"
   name = "github.com/hashicorp/go-version"
   packages = ["."]
   pruneopts = "UT"
-  revision = "03c5bf6be031b6dd45afec16b1cf94fc8938bc77"
+  revision = "b5a281d3160aa11950a6182bd9a9dc2cb1e02d50"
+  version = "v1.0.0"
 
 [[projects]]
-  digest = "1:46ed28d956228a4113be4e08ba8fae6d78b154bbf78cb7c2108ab157faaac8dc"
+  digest = "1:b24d38b282bacf9791408a080f606370efa3d364e4b5fd9ba0f7b87786d3b679"
   name = "github.com/urfave/cli"
   packages = ["."]
   pruneopts = "UT"
-  revision = "1efa31f08b9333f1bd4882d61f9d668a70cd902e"
-  version = "v1.18.0"
+  revision = "cfb38830724cc34fedffe9a2a29fb54fa9169cd1"
+  version = "v1.20.0"
 
 [[projects]]
   digest = "1:c520e4d4fc9976e4da44ee0a3bdd5a45e8a206a72c1ccd2089f3d184f5eb942a"
