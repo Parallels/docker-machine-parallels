@@ -55,9 +55,7 @@ default, if no value is specified for this flag, Machine will check locally for
 a boot2docker ISO. If one is found, that will be used as the ISO for the
 created machine. If one is not found, the latest ISO release available on
 [boot2docker/boot2docker](https://github.com/boot2docker/boot2docker) will be
-downloaded and stored locally for future use. Note that this means you must run
-`docker-machine upgrade` deliberately on a machine if you wish to update the "cached"
-boot2docker ISO.
+downloaded and stored locally for future use.
 
 This is the default behavior (when `--parallels-boot2docker-url=""`), but the
 option also supports specifying ISOs by the `http://` and `file://` protocols.
