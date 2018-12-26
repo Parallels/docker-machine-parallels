@@ -1,5 +1,10 @@
 # Changelog
 
+## 1.4.0 (December 27, 2018)
+- Add `--parallels-share-folder` option for customizing shared folder paths [GH-78]
+- Add `--parallels-nested-virtualization` option for toggling the nested virtualization feature [GH-74]
+- Update build dependencies [GH-79]
+
 ## 1.3.0 (September 25, 2017)
 - Fix compatibility with Parallels Desktop 13.0.* [GH-68]
 - Add `--parallels-video-size` argument to manage a video memory size [GH-61]
