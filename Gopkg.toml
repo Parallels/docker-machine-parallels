@@ -1,0 +1,18 @@
+# Refer to https://golang.github.io/dep/docs/Gopkg.toml.html
+# for detailed Gopkg.toml documentation.
+
+[[constraint]]
+  name = "github.com/docker/machine"
+  version = "0.16.0"
+
+[[constraint]]
+  name = "github.com/urfave/cli"
+  version = "1.20.0"
+
+[[constraint]]
+  name = "github.com/hashicorp/go-version"
+  version = "1.0.0"
+
+[prune]
+  go-tests = true
+  unused-packages = true

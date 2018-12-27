@@ -1,5 +1,18 @@
 package logrus
 
+import "time"
+
+// Default key names for the default fields
+const (
+	defaultTimestampFormat = time.RFC3339
+	FieldKeyMsg            = "msg"
+	FieldKeyLevel          = "level"
+	FieldKeyTime           = "time"
+	FieldKeyLogrusError    = "logrus_error"
+	FieldKeyFunc           = "func"
+	FieldKeyFile           = "file"
+)
+
 // The Formatter interface is used to implement a custom Formatter. It takes an
 // `Entry`. It exposes all the fields, including the default ones:
 //
@@ -14,7 +27,7 @@ type Formatter interface {
 	Format(*Entry) ([]byte, error)
 }
 
-// This is to not silently overwrite `time`, `msg` and `level` fields when
+// This is to not silently overwrite `time`, `msg`, `func` and `level` fields when
 // dumping it. If this code wasn't there doing:
 //
 //  logrus.WithField("level", 1).Info("hello")
@@ -26,19 +39,40 @@ type Formatter interface {
 //
 // It's not exported because it's still using Data in an opinionated way. It's to
 // avoid code duplication between the two default formatters.
-func prefixFieldClashes(entry *Entry) {
-	_, ok := entry.Data["time"]
-	if ok {
-		entry.Data["fields.time"] = entry.Data["time"]
+func prefixFieldClashes(data Fields, fieldMap FieldMap, reportCaller bool) {
+	timeKey := fieldMap.resolve(FieldKeyTime)
+	if t, ok := data[timeKey]; ok {
+		data["fields."+timeKey] = t
+		delete(data, timeKey)
 	}
 
-	_, ok = entry.Data["msg"]
-	if ok {
-		entry.Data["fields.msg"] = entry.Data["msg"]
+	msgKey := fieldMap.resolve(FieldKeyMsg)
+	if m, ok := data[msgKey]; ok {
+		data["fields."+msgKey] = m
+		delete(data, msgKey)
 	}
 
-	_, ok = entry.Data["level"]
-	if ok {
-		entry.Data["fields.level"] = entry.Data["level"]
+	levelKey := fieldMap.resolve(FieldKeyLevel)
+	if l, ok := data[levelKey]; ok {
+		data["fields."+levelKey] = l
+		delete(data, levelKey)
+	}
+
+	logrusErrKey := fieldMap.resolve(FieldKeyLogrusError)
+	if l, ok := data[logrusErrKey]; ok {
+		data["fields."+logrusErrKey] = l
+		delete(data, logrusErrKey)
+	}
+
+	// If reportCaller is not set, 'func' will not conflict.
+	if reportCaller {
+		funcKey := fieldMap.resolve(FieldKeyFunc)
+		if l, ok := data[funcKey]; ok {
+			data["fields."+funcKey] = l
+		}
+		fileKey := fieldMap.resolve(FieldKeyFile)
+		if l, ok := data[fileKey]; ok {
+			data["fields."+fileKey] = l
+		}
 	}
 }
