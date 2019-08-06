@@ -10,6 +10,13 @@ import (
 	"github.com/docker/machine/libmachine/log"
 )
 
+func detectCmdInPath(cmd string) string {
+	if path, err := exec.LookPath(cmd); err == nil {
+		return path
+	}
+	return cmd
+}
+
 var (
 	prlctlCmd      = detectCmdInPath("prlctl")
 	prlsrvctlCmd   = detectCmdInPath("prlsrvctl")
