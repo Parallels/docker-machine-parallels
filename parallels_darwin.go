@@ -749,13 +749,6 @@ func (d *Driver) publicSSHKeyPath() string {
 	return d.GetSSHKeyPath() + ".pub"
 }
 
-func detectCmdInPath(cmd string) string {
-	if path, err := exec.LookPath(cmd); err == nil {
-		return path
-	}
-	return cmd
-}
-
 // Detects Parallels Desktop major version
 func getParallelsVersion() (*version.Version, error) {
 	stdout, _, err := prlctlOutErr("--version")
