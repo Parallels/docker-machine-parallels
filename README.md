@@ -48,7 +48,7 @@ Available options:
  - `--parallels-video-size`: Size of video memory for host (in MB).
  - `--parallels-share-folder`: Path to the directory which should be shared with the host VM. Could be specified multiple times, once per each directory.
  - `--parallels-no-share`: Disable the sharing of any directory.
- - `--parallels-nested-virutalization`: Enable nested virtualization.
+ - `--parallels-nested-virtualization`: Enable nested virtualization.
 
 The `--parallels-boot2docker-url` flag takes a few different forms. By
 default, if no value is specified for this flag, Machine will check locally for
