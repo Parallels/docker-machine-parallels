@@ -11,7 +11,13 @@ to create Docker hosts locally on [Parallels Desktop for Mac](http://www.paralle
 **Business** edition (_Standard edition is not supported!_)
 
 ## Installation
-Install via Homebrew:
+Install via [MacPorts](https://www.macports.org):
+
+```console
+$ sudo port install docker-machine-parallels
+```
+
+Install via [Homebrew](https://brew.sh):
 
 ```console
 $ brew install docker-machine-parallels
