@@ -83,7 +83,7 @@ Environment variables and default values:
 
 ### Build from Source
 If you wish to work on Parallels Driver for Docker machine, you'll first need
-[Go](http://www.golang.org) installed (version 1.10+ is required).
+[Go](http://www.golang.org) installed (version 1.14+ is required).
 Make sure Go is properly installed, including setting up a [GOPATH](http://golang.org/doc/code.html#GOPATH).
 
 Run these commands to build the plugin binary:
