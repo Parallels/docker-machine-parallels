@@ -4,7 +4,7 @@ This is a plugin for [Docker Machine](https://docs.docker.com/machine/) allowing
 to create Docker hosts locally on [Parallels Desktop for Mac](http://www.parallels.com/products/desktop/)
 
 ## Requirements
-* OS X 10.9+
+* macOS 10.11+
 * [Docker Machine](https://docs.docker.com/machine/) 0.5.1+ (is bundled to
   [Docker Toolbox](https://www.docker.com/docker-toolbox) 1.9.1+)
 * [Parallels Desktop](http://www.parallels.com/products/desktop/) 11.0.0+ **Pro** or
