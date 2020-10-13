@@ -6,7 +6,6 @@ import (
 	"io/ioutil"
 	"net"
 	"os"
-	"os/exec"
 	"path/filepath"
 	"regexp"
 	"runtime"
@@ -50,7 +49,6 @@ var (
 	errMachineNotExist           = errors.New("machine does not exist")
 	errSharedNetworkNotConnected = errors.New("Your Mac host is not connected to Shared network. Please, ensure this option is set: 'Parallels Desktop' -> 'Preferences' -> 'Network' -> 'Shared' -> 'Connect Mac to this network'")
 
-	v10, _ = version.NewVersion("10.0.0")
 	v11, _ = version.NewVersion("11.0.0")
 )
 
@@ -111,14 +109,9 @@ func (d *Driver) Create() error {
 		return err
 	}
 
-	distribution := "boot2docker"
-	if ver.LessThan(v11) {
-		distribution = "linux-2.6"
-	}
-
 	absStorePath, _ := filepath.Abs(d.ResolveStorePath("."))
 	if err = prlctl("create", d.MachineName,
-		"--distribution", distribution,
+		"--distribution", "boot2docker",
 		"--dst", absStorePath,
 		"--no-hdd"); err != nil {
 		return err
@@ -190,33 +183,25 @@ func (d *Driver) Create() error {
 		return err
 	}
 
-	// For Parallels Desktop >= 11.0.0
-	if ver.Compare(v11) >= 0 {
-		// Enable headless mode
-		if err = prlctl("set", d.MachineName,
-			"--startup-view", "headless"); err != nil {
-			return err
-		}
+	// Enable headless mode
+	if err = prlctl("set", d.MachineName,
+		"--startup-view", "headless"); err != nil {
+		return err
+	}
 
-		// Don't share any additional folders
-		if err = prlctl("set", d.MachineName,
-			"--shf-host-defined", "off"); err != nil {
-			return err
-		}
+	// Don't share any additional folders
+	if err = prlctl("set", d.MachineName,
+		"--shf-host-defined", "off"); err != nil {
+		return err
+	}
 
-		// Enable time sync, don't touch timezone (this part is buggy)
-		if err = prlctl("set", d.MachineName, "--time-sync", "on"); err != nil {
-			return err
-		}
-		if err = prlctl("set", d.MachineName,
-			"--disable-timezone-sync", "on"); err != nil {
-			return err
-		}
-	} else {
-		// Disable time sync feature because it has an issue with timezones.
-		if err = prlctl("set", d.MachineName, "--time-sync", "off"); err != nil {
-			return err
-		}
+	// Enable time sync, don't touch timezone (this part is buggy)
+	if err = prlctl("set", d.MachineName, "--time-sync", "on"); err != nil {
+		return err
+	}
+	if err = prlctl("set", d.MachineName,
+		"--disable-timezone-sync", "on"); err != nil {
+		return err
 	}
 
 	// Configure Shared Folders
@@ -372,7 +357,7 @@ func (d *Driver) Kill() error {
 func (d *Driver) PreCreateCheck() error {
 	// Check platform type
 	if runtime.GOOS != "darwin" {
-		return fmt.Errorf("Driver \"parallels\" works only on OS X!")
+		return fmt.Errorf("Driver \"parallels\" works only on macOS!")
 	}
 
 	// Check Parallels Desktop version
@@ -381,15 +366,8 @@ func (d *Driver) PreCreateCheck() error {
 		return err
 	}
 
-	if ver.LessThan(v10) {
-		return fmt.Errorf("Driver \"parallels\" supports only Parallels Desktop 10 and higher. You use: Parallels Desktop %s.", ver)
-	}
-
 	if ver.LessThan(v11) {
-		log.Debugf("Found Parallels Desktop version: %s", ver)
-		log.Infof("Driver \"parallels\" integration with Parallels Desktop 10 is maintained by open source community.")
-		log.Infof("For Parallels supported configuration you should use it with Parallels Desktop 11 or later (Pro or Business edition).")
-		return nil
+		return fmt.Errorf("Driver \"parallels\" supports only Parallels Desktop 11 and higher. You use: Parallels Desktop %s.", ver)
 	}
 
 	// Check Parallels Desktop edition

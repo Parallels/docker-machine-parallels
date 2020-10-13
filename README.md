@@ -4,7 +4,7 @@ This is a plugin for [Docker Machine](https://docs.docker.com/machine/) allowing
 to create Docker hosts locally on [Parallels Desktop for Mac](http://www.parallels.com/products/desktop/)
 
 ## Requirements
-* OS X 10.9+
+* macOS 10.11+
 * [Docker Machine](https://docs.docker.com/machine/) 0.5.1+ (is bundled to
   [Docker Toolbox](https://www.docker.com/docker-toolbox) 1.9.1+)
 * [Parallels Desktop](http://www.parallels.com/products/desktop/) 11.0.0+ **Pro** or
@@ -83,7 +83,7 @@ Environment variables and default values:
 
 ### Build from Source
 If you wish to work on Parallels Driver for Docker machine, you'll first need
-[Go](http://www.golang.org) installed (version 1.10+ is required).
+[Go](http://www.golang.org) installed (version 1.14+ is required).
 Make sure Go is properly installed, including setting up a [GOPATH](http://golang.org/doc/code.html#GOPATH).
 
 Run these commands to build the plugin binary:
