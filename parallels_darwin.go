@@ -43,11 +43,12 @@ var (
 	reMachineNotFound  = regexp.MustCompile(`Failed to get VM config: The virtual machine could not be found..*`)
 	reParallelsVersion = regexp.MustCompile(`.* (\d+\.\d+\.\d+).*`)
 	reParallelsEdition = regexp.MustCompile(`edition="(.+)"`)
+	reSharedAdapterIP  = regexp.MustCompile(`\s*IPv4 address:\s*(\d+\.\d+\.\d+\.\d+)`)
 	reSharedFolder     = regexp.MustCompile(`\s*(.+) \(\+\) path='(.+)' mode=.+`)
 
-	errMachineExist       = errors.New("machine already exists")
-	errMachineNotExist    = errors.New("machine does not exist")
-	errSharedNotConnected = errors.New("Your Mac host is not connected to Shared network. Please, enable this option: 'Parallels Desktop' -> 'Preferences' -> 'Network' -> 'Shared' -> 'Connect Mac to this network'")
+	errMachineExist              = errors.New("machine already exists")
+	errMachineNotExist           = errors.New("machine does not exist")
+	errSharedNetworkNotConnected = errors.New("Your Mac host is not connected to Shared network. Please, ensure this option is set: 'Parallels Desktop' -> 'Preferences' -> 'Network' -> 'Shared' -> 'Connect Mac to this network'")
 
 	v10, _ = version.NewVersion("10.0.0")
 	v11, _ = version.NewVersion("11.0.0")
@@ -407,12 +408,8 @@ func (d *Driver) PreCreateCheck() error {
 	}
 
 	// Check whether the host is connected to Shared network
-	ok, err := isSharedConnected()
-	if err != nil {
+	if err := checkSharedNetworkConnected(); err != nil {
 		return err
-	}
-	if !ok {
-		return errSharedNotConnected
 	}
 
 	// Downloading boot2docker to cache should be done here to make sure
@@ -523,12 +520,8 @@ func (d *Driver) SetConfigFromFlags(opts drivers.DriverOptions) error {
 // Start a host
 func (d *Driver) Start() error {
 	// Check whether the host is connected to Shared network
-	ok, err := isSharedConnected()
-	if err != nil {
+	if err := checkSharedNetworkConnected(); err != nil {
 		return err
-	}
-	if !ok {
-		return errSharedNotConnected
 	}
 
 	s, err := d.GetState()
@@ -787,12 +780,35 @@ func getParallelsEdition() (string, error) {
 }
 
 // Checks whether the host is connected to Shared network
-func isSharedConnected() (bool, error) {
+func checkSharedNetworkConnected() error {
 	stdout, _, err := prlsrvctlOutErr("net", "info", "Shared")
 	if err != nil {
-		return false, err
+		return err
 	}
 
-	reSharedIsConnected := regexp.MustCompile(`Bound To:.*`)
-	return reSharedIsConnected.MatchString(stdout), nil
+	// Parse the IPv4 of Shared network adapter
+	res := reSharedAdapterIP.FindStringSubmatch(string(stdout))
+	if res == nil {
+		return errSharedNetworkNotConnected
+	}
+
+	sharedNetworkIP := net.ParseIP(res[1])
+	log.Debugf("IP address of Shared network adapter: %s", sharedNetworkIP)
+
+	hostAddrs, err := net.InterfaceAddrs()
+	if err != nil {
+		return err
+	}
+	log.Debugf("All host interface addressess: %v", hostAddrs)
+
+	// Check if the there is an interface with the Shared network adapter's IP assigned
+	for _, netAddr := range hostAddrs {
+		ipAddr := netAddr.(*net.IPNet).IP
+		if ipAddr.Equal(sharedNetworkIP) {
+			log.Debugf("Parallels Shared network adapter is connected")
+			return nil
+		}
+	}
+
+	return errSharedNetworkNotConnected
 }
