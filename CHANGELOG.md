@@ -1,5 +1,15 @@
 # Changelog
 
+## 2.0.0 (October 13, 2020)
+**Breaking changes:**
+- Droped support of OS X 10.10 Yosemite and earlier [GH-95]
+- Droped support of Parallels Desktop 10 and earlier [GH-95]
+
+Improvements:
+- Fixed compatibility with macOS 11.0 [GH-96]
+- Updated Golang to 1.14, updated dependencies [GH-95]
+- Improved the error message when Parallels Desktop doesn't have the activated license [GH-94]
+
 ## 1.4.0 (December 27, 2018)
 - Add `--parallels-share-folder` option for customizing shared folder paths [GH-78]
 - Add `--parallels-nested-virtualization` option for toggling the nested virtualization feature [GH-74]
