@@ -751,7 +751,7 @@ func getParallelsEdition() (string, error) {
 	// Parse Parallels Desktop version
 	res := reParallelsEdition.FindStringSubmatch(string(stdout))
 	if res == nil {
-		return "", fmt.Errorf("Parallels Desktop edition could not be fetched!")
+		return "", fmt.Errorf("Driver \"parallels\" requires Parallels Desktop license to be activated. More info: https://kb.parallels.com/en/124225")
 	}
 
 	return res[1], nil
