@@ -1,4 +1,4 @@
-module github.com/Parallels/docker-machine-parallels
+module github.com/Parallels/docker-machine-parallels/v2
 
 go 1.14
 

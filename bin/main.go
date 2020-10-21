@@ -4,9 +4,9 @@ import (
 	"os"
 	"path"
 
-	"github.com/Parallels/docker-machine-parallels"
-	"github.com/urfave/cli"
+	parallels "github.com/Parallels/docker-machine-parallels/v2"
 	"github.com/docker/machine/libmachine/drivers/plugin"
+	"github.com/urfave/cli"
 )
 
 var appHelpTemplate = `This is a Docker Machine plugin for Parallels Desktop.
