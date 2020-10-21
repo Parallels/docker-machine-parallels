@@ -1,5 +1,8 @@
 # Changelog
 
+## 2.0.1 (October 21, 2020)
+- Minor fix in `go.mod` for module declaration
+
 ## 2.0.0 (October 13, 2020)
 **Breaking changes:**
 - Dropped support of OS X 10.10 Yosemite and earlier [GH-95]
