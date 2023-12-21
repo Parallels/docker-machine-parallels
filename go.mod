@@ -1,16 +1,19 @@
 module github.com/Parallels/docker-machine-parallels/v2
 
-go 1.14
+go 1.21
 
 require (
-	github.com/Azure/go-ansiterm v0.0.0-20170929234023-d6e3b3328b78 // indirect
-	github.com/docker/docker v17.12.0-ce-rc1.0.20181225093023-5ddb1d410a8b+incompatible // indirect
 	github.com/docker/machine v0.16.2
-	github.com/google/go-cmp v0.5.2 // indirect
-	github.com/hashicorp/go-version v1.2.1
-	github.com/pkg/errors v0.9.1 // indirect
-	github.com/sirupsen/logrus v1.6.0 // indirect
-	github.com/urfave/cli v1.22.4
-	golang.org/x/crypto v0.0.0-20200820211705-5c72a883971a // indirect
-	gotest.tools v2.2.0+incompatible // indirect
+	github.com/hashicorp/go-version v1.6.0
+	github.com/urfave/cli v1.22.14
 )
+
+require (
+	github.com/cpuguy83/go-md2man/v2 v2.0.3 // indirect
+	github.com/russross/blackfriday/v2 v2.1.0 // indirect
+	golang.org/x/crypto v0.15.0 // indirect
+	golang.org/x/sys v0.14.0 // indirect
+	golang.org/x/term v0.14.0 // indirect
+)
+
+replace github.com/docker/machine v0.16.2 => gitlab.com/gitlab-org/ci-cd/docker-machine v0.16.2-gitlab.23

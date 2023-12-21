@@ -4,7 +4,7 @@ GO_LDFLAGS := -X $(shell go list ./).GitCommit=$(shell git rev-parse --short HEA
 default: build
 
 bin/docker-machine-driver-parallels:
-	go build -i -ldflags "$(GO_LDFLAGS)" \
+	go build -ldflags "$(GO_LDFLAGS)" \
 	-o ./bin/docker-machine-driver-parallels ./bin
 
 build: clean bin/docker-machine-driver-parallels
